@@ -126,16 +126,18 @@
 
   <div class="panel">
     <h3>👥 전체 참가자 <span class="cnt" id="userCnt">0명</span>
-      <a href="roster.html" target="_blank" style="float:right;font-size:12px;color:#e8c96a;text-decoration:none;font-weight:400">📺 합격자 명단 (TV용) ↗</a></h3>
+      <span style="float:right;font-size:12px;font-weight:400">
+        <a href="qr.html" target="_blank" style="color:#e8c96a;text-decoration:none">🔗 접속 QR ↗</a> ·
+        <a href="roster.html" target="_blank" style="color:#e8c96a;text-decoration:none">📺 합격자 명단 (TV용) ↗</a>
+      </span></h3>
     <div class="names" id="userNames"><span class="empty">아직 입장한 참가자가 없습니다</span></div>
   </div>
 
   <div class="panel">
     <h3>🎵 BGM <span class="cnt" id="bgmNow">⏹ 정지됨</span></h3>
     <div class="desc" style="font-size:12px;color:rgba(255,255,255,.45);margin-bottom:2px;line-height:1.7">
-      시작(게임 시작)·방·서류합격·귀갓길(④)·카페·엔딩(⑥) = 게이트 열림/전원 도착 시 <b>자동 재생</b> ·
-      지원서 작성 대기·스터디 도착·계획서 전원 작성 = <b>자동 정지</b><br>
-      수동 조작 2가지: ⏹ <b>정지</b>(조각말씀 시작 직전) · ▶ <b>면접 후 귀갓길</b>(말씀 끝난 직후 다시)
+      모든 곡이 진행에 맞춰 <b>자동 재생/정지</b>됩니다 (조각말씀 앞뒤 포함).<br>
+      아래 버튼은 예비용 수동 조작입니다 — 평소엔 만질 필요 없음.
     </div>
     <div class="bgm-btns" id="bgmBtns"></div>
     <div class="bgm-vol">🔊 <input type="range" id="bgmVol" min="0" max="100" value="80"> <span id="bgmVolTxt">80%</span></div>
@@ -203,10 +205,10 @@ const BGM_TRACKS = {
   game_start:  { file: "assets/start_bgm.mp3",  name: "시작" },        // [게임 시작] 여는 순간
   scene_room:  { file: "assets/room_bgm.mp3",   name: "방 프롤로그" },
   scene_room2: { file: "assets/pass_bgm.mp3",   name: "서류 합격" },
-  // 심사 제출 ④를 여는 순간 자동 재생. 조각말씀 직전까지 유지.
-  // ⚠️ 조각말씀 시작 타이밍은 감지 불가 → 진행자가 ⏹ 수동 정지,
-  //    말씀이 끝나면 다시 ▶「면접 후 귀갓길」(설교 후 귀갓길도 같은 곡)
+  // 심사 제출 ④를 여는 순간 자동 재생 → 전원이 조각말씀 화면에 도착하면 자동 정지
   interview_done: { file: "assets/alley_bgm.mp3", name: "면접 후 귀갓길" },
+  // 전원이 「말씀 다 들었어요」를 누르면 자동 재개 (같은 곡)
+  sermon_done: { file: "assets/alley_bgm.mp3", name: "설교 후 귀갓길" },
   scene_cafe2: { file: "assets/cafe2_bgm.mp3",  name: "최종 합격 카페" },
   plan_done:   { file: "assets/ending_bgm.mp3", name: "엔딩" },        // ⑥ 교제 완료 여는 순간 = 엔딩 영상 시작
 };
@@ -302,18 +304,35 @@ function start() {
   firebase.initializeApp(FIREBASE_CONFIG);
   const db = firebase.database();
 
-  /* 전체 참가자 실시간 — 접속(이름 입력 전)한 기기도 인원수에 포함 */
+  /* 전체 참가자 실시간 — 접속(이름 입력 전)한 기기도 인원수에 포함.
+     이름을 클릭하면 해당 참가자를 제거 (중도 이탈자 정리용 —
+     제거하면 전원 도착 게이트가 남은 인원 기준으로 자동 진행됨) */
   db.ref("users").on("value", (snap) => {
     const v = snap.val() || {};
-    const total = Object.keys(v).length;
-    const names = Object.values(v).map((u) => u && u.name).filter(Boolean);
-    const unnamed = total - names.length;
-    document.getElementById("userCnt").textContent = total + "명";
-    let html = names.map((n) => `<span>${esc(n)}</span>`).join("");
+    const entries = Object.entries(v);
+    const named = entries.filter(([, u]) => u && u.name);
+    const unnamed = entries.length - named.length;
+    document.getElementById("userCnt").textContent = entries.length + "명";
+    let html = named.map(([uid, u]) =>
+      `<span data-uid="${esc(uid)}" data-name="${esc(u.name)}" title="클릭하면 제거" style="cursor:pointer">${esc(u.name)}</span>`).join("");
     if (unnamed > 0) html += `<span class="empty">이름 입력 전 ${unnamed}명</span>`;
     document.getElementById("userNames").innerHTML =
       html || `<span class="empty">아직 입장한 참가자가 없습니다</span>`;
   });
+  document.getElementById("userNames").onclick = (e) => {
+    const uid = e.target.dataset && e.target.dataset.uid;
+    if (!uid) return;
+    const name = e.target.dataset.name;
+    if (!confirm(`'${name}' 참가자를 제거할까요?\n\n중도 이탈(폰 방전 등)한 인원을 정리할 때 사용하세요.\n제거하면 전원 도착 대기가 남은 인원 기준으로 진행됩니다.`)) return;
+    db.ref("users/" + uid).remove();
+    // 도착 기록에서도 제거 (게이트 카운트 정리)
+    db.ref("arrivals").once("value").then((s) => {
+      const a = s.val() || {};
+      for (const key of Object.keys(a)) {
+        if (a[key] && a[key][uid]) db.ref(`arrivals/${key}/${uid}`).remove();
+      }
+    });
+  };
 
   /* 게이트 카드 생성 */
   const wrap = document.getElementById("gates");
@@ -387,6 +406,26 @@ function start() {
         db.ref(`gates/${g.key}`).set({ open: true, openedAt: firebase.database.ServerValue.TIMESTAMP });
       }
     };
+  });
+
+  /* 조각말씀 BGM 자동화 (게이트 카드 없는 신호 지점 — story.js 의 mark 스텝)
+     - sermon_ready: 전원이 조각말씀 화면에 도착 → 귀갓길 곡 자동 정지
+     - sermon_done : 전원이 「말씀 다 들었어요」 누름 → 같은 곡 자동 재개 */
+  let srFirst = true;
+  db.ref("arrivals/sermon_ready").on("value", (s) => {
+    if (totalUsers > 0 && s.numChildren() >= totalUsers && !bgmStopped.has("sermon_ready")) {
+      bgmStopped.add("sermon_ready");
+      if (!srFirst) stopBgm();
+    }
+    srFirst = false;
+  });
+  let sdFirst = true;
+  db.ref("arrivals/sermon_done").on("value", (s) => {
+    if (totalUsers > 0 && s.numChildren() >= totalUsers && !bgmPlayed.has("sermon_done")) {
+      if (sdFirst) bgmPlayed.add("sermon_done");
+      else playBgm("sermon_done");
+    }
+    sdFirst = false;
   });
 
   /* 전체 초기화 */

@@ -355,12 +355,14 @@ const STORY = [
   { type: "place", value: "교회 대강당" },
   { type: "say", text: "%NAME_EUN% 홀린 듯 대강당 뒷자리에 조용히 앉았다. 마침 강단에서 말씀이 선포되고 있었다." },
 
+  { type: "mark", key: "sermon_ready" }, /* 전원 도착 → 진행자 콘솔 BGM 자동 정지 */
   { type: "cue",
     icon: "✝️",
     title: "말씀이 선포되고 있습니다",
     sub: "대강당 뒷자리에 앉았습니다.\n잠시 화면에서 눈을 떼고, 앞의 스크린(강단)을 봐 주세요.\n설교가 끝나면 아래 버튼을 눌러 주세요.",
     button: "말씀 다 들었어요",
   },
+  { type: "mark", key: "sermon_done" }, /* 전원 완료 → 귀갓길 곡 자동 재개 */
 
   /* ───────── 설교 후: 달라진 발걸음 (assets/bg-alley-dusk.png — 더 어두워진 귀갓길) ───────── */
   { type: "bgm", play: "alley" }, /* 🎵 같은 곡 이어서 재생 — 최종 발표 카페 전까지 */

@@ -150,6 +150,66 @@ function showTapStart() {
   });
 }
 
+/* ---------- 화면 꺼짐 방지 (Wake Lock) ----------
+   설교 시청·실물 작성 중 폰 화면이 꺼지면 브라우저가 리로드될 수 있음.
+   미지원 브라우저는 조용히 무시. 화면이 다시 보이면 자동 재획득 */
+async function keepAwake() {
+  try { await navigator.wakeLock.request("screen"); } catch {}
+}
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") keepAwake();
+});
+
+/* ---------- 진행 저장 / 이어하기 ----------
+   매 스텝 위치와 선택(flags)을 폰에 저장 → 새로고침·리로드 시
+   "이어하기"로 그 장면부터 복구 (12시간 지난 기록은 무시) */
+const SAVE_KEY = "hs_save";
+function saveProgress(i) {
+  if (!player.fullName) return;
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify({
+      v: 1, i, flags: player.flags,
+      fullName: player.fullName, gender: player.gender, ts: Date.now(),
+    }));
+  } catch {}
+}
+function loadSave() {
+  try {
+    const s = JSON.parse(localStorage.getItem(SAVE_KEY));
+    if (!s || s.v !== 1 || !s.fullName) return null;
+    if (!(s.i > 0 && s.i < STORY.length)) return null;
+    if (Date.now() - s.ts > 12 * 3600 * 1000) return null; // 12시간 경과 → 무시
+    return s;
+  } catch { return null; }
+}
+/* 저장 지점까지 배경/스프라이트/장소/날짜 상태를 재구성 (화면 렌더링 없이) */
+function fastForward(end) {
+  let lastBgm = null;
+  for (let j = 0; j < end; j++) {
+    const s = STORY[j];
+    if (s.if && player.flags[s.if.flag] !== s.if.value) continue;
+    if (s.type === "bg") vn.bg = s.value;
+    else if (s.type === "sprite") vn.sprite = s.value;
+    else if (s.type === "place") vn.place = s.value;
+    else if (s.type === "date") vn.date = s.value;
+    else if (s.type === "bgm") lastBgm = s.stop ? null : s.play;
+  }
+  if (lastBgm) demoBgm(lastBgm); // 데모 모드일 때만 재생됨
+}
+function showResumePrompt(save) {
+  return new Promise((resolve) => {
+    const el = screen("cue-screen", `
+      <div class="cue-icon">🔄</div>
+      <div class="cue-title">진행하던 기록이 있습니다</div>
+      <div class="cue-sub">${esc(save.fullName)} ${save.gender === "male" ? "형제" : "자매"}님,<br>중단된 장면부터 이어서 진행할 수 있습니다.</div>
+      <button class="btn" id="resumeBtn" style="max-width:300px">이어하기</button>
+      <button class="btn ghost" id="restartBtn" style="max-width:300px;margin-top:12px">처음부터 시작</button>
+    `);
+    el.querySelector("#resumeBtn").onclick = () => resolve(true);
+    el.querySelector("#restartBtn").onclick = () => resolve(false);
+  });
+}
+
 /* ---------- 게임 시작 게이트 ----------
    탭 화면 터치 직후 기기를 접속자로 등록(이름 입력 전, 인원수만 집계)하고,
    진행자가 admin.html 에서 [게임 시작]을 열 때까지 대기.
@@ -837,10 +897,11 @@ function showCredits() {
 }
 
 /* ---------- 메인 루프 ---------- */
-async function runStory() {
-  let i = 0;
+async function runStory(startAt = 0) {
+  let i = startAt;
   while (i < STORY.length) {
     const s = STORY[i];
+    saveProgress(i); // 이어하기용 — 현재 위치 저장
     // if: { flag, value } 가 붙은 스텝은 해당 선택을 한 사람에게만 보여줌
     if (s.if && player.flags[s.if.flag] !== s.if.value) { i++; continue; }
     switch (s.type) {
@@ -872,6 +933,7 @@ async function runStory() {
       case "share": await showShare(s); break;
       case "ending": await showEnding(s); break;
       case "bgm": s.stop ? demoBgmStop() : demoBgm(s.play); break; // 데모 모드 전용
+      case "mark": Sync.submit(s.key, { name: player.fullName }); break; // 신호만 보냄 (BGM 자동화용)
       case "credits": await showCredits(s); break;
       default: console.warn("알 수 없는 step:", s);
     }
@@ -881,11 +943,37 @@ async function runStory() {
 
 (async function main() {
   await showTapStart();   // 첫 터치 → 이후 BGM 자동재생 허용 + 전체화면
-  await waitGameStart();  // 진행자가 [게임 시작]을 열 때까지 대기 (접속 인원 집계)
-  preloadBackgrounds();   // 대기 중 배경 이미지 미리 받기
-  await showStartVideo(); // start.mp4 시작과 동시에 시작곡 재생 → 끝나면 터치
-  await showCreate();     // 형제/자매 선택 + 닉네임
-  preloadSprites();       // 성별 확정 → 스프라이트 미리 받기
-  await showIntroVideo();
-  await runStory();
+  keepAwake();            // 화면 꺼짐 방지
+
+  // 진행하던 기록이 있으면 이어하기 제안
+  const save = loadSave();
+  let resumeAt = -1;
+  if (save) {
+    if (await showResumePrompt(save)) {
+      player.fullName = save.fullName;
+      player.name = givenNameOf(save.fullName);
+      player.gender = save.gender;
+      player.flags = save.flags || {};
+      resumeAt = save.i;
+    } else {
+      localStorage.removeItem(SAVE_KEY);
+    }
+  }
+
+  await waitGameStart();  // 진행자가 [게임 시작]을 열 때까지 대기 (이미 열렸으면 바로 통과)
+  preloadBackgrounds();   // 배경 이미지 미리 받기
+
+  if (resumeAt >= 0) {
+    // 이어하기: 영상·이름 입력 건너뛰고 저장 지점부터
+    Sync.join({ name: player.fullName, gender: player.gender }); // 같은 기기 ID로 재등록
+    preloadSprites();
+    fastForward(resumeAt);
+    await runStory(resumeAt);
+  } else {
+    await showStartVideo(); // start.mp4 시작과 동시에 시작곡 재생 → 끝나면 터치
+    await showCreate();     // 형제/자매 선택 + 닉네임
+    preloadSprites();       // 성별 확정 → 스프라이트 미리 받기
+    await showIntroVideo();
+    await runStory();
+  }
 })();

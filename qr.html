@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>접속 QR — 천국상사(주) 채용</title>
+<style>
+/* 스크린 표시/인쇄 겸용 접속 안내 페이지 */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  background: #fff;
+  color: #1c2c4e;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3vh;
+  text-align: center;
+  padding: 4vh;
+}
+.badge { font-size: 2.4vh; letter-spacing: .28em; color: #2e7cd6; font-weight: 700; }
+h1 { font-size: 5.5vh; font-weight: 900; letter-spacing: .04em; }
+img { width: min(52vh, 80vw); height: auto; }
+.url { font-size: 2.6vh; color: #5c6d8a; letter-spacing: .02em; }
+.hint { font-size: 2.4vh; color: #7d8aa0; line-height: 1.7; }
+@media print { .hint { display: none; } }
+</style>
+</head>
+<body>
+<div class="badge">✝️ 천국상사(주) · HEAVEN &amp; CO.</div>
+<h1>채용 사이트 접속</h1>
+<img src="assets/qr.png" alt="접속 QR코드">
+<div class="url">jbchcampusministry.github.io/post</div>
+<div class="hint">카메라로 QR을 찍어 접속해 주세요.<br>아이폰은 사파리에서 공유 → 「홈 화면에 추가」 후 실행하면 전체화면으로 즐길 수 있어요.</div>
+</body>
+</html>
