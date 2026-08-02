@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>인트로용 채용공고 캡처</title>
+<!--
+  인트로 영상 19.5~22.5초 "문자/공고 확인" 컷 캡처용 (게임과 무관한 제작 도구).
+  게임 jobpost 화면과 동일한 디자인을 세로로 전부 펼친 버전 (스크롤 없음, 팬 연출용).
+  렌더: 헤드리스 크롬 --window-size=1080,3200 캡처 후 하단 여백 크롭.
+-->
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --gold: #e8c96a; --gold-deep: #c9a13b; --ink: #1d2333; }
+  body {
+    background: #edeef2; color: var(--ink);
+    font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  }
+  .wrap { width: 360px; zoom: 3; }
+  .appbar {
+    background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+    color: #2a2107; padding: 15px 18px; font-weight: 800; font-size: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .body { padding: 20px 18px 24px; }
+  .co { font-size: 13px; color: #777; margin-bottom: 4px; }
+  .title { font-size: 22px; font-weight: 800; line-height: 1.35; margin-bottom: 14px; word-break: keep-all; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+  .tags span {
+    font-size: 12px; background: #fff; border: 1px solid #ddd; color: #555;
+    border-radius: 999px; padding: 5px 11px;
+  }
+  .sec {
+    background: #fff; border-radius: 14px; padding: 16px; margin-bottom: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  }
+  .sec h4 { font-size: 13px; color: var(--gold-deep); margin-bottom: 9px; letter-spacing: .05em; }
+  .sec li { list-style: none; font-size: 14.5px; line-height: 1.75; word-break: keep-all; }
+  .sec li::before { content: "· "; color: var(--gold-deep); font-weight: 800; }
+  .btn {
+    display: block; width: 100%; margin-top: 16px; padding: 15px;
+    border: 0; border-radius: 14px; font-size: 17px; font-weight: 800;
+    background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+    color: #2a2107; box-shadow: 0 4px 14px rgba(201,161,59,.35);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="appbar">✝️ 사랑인 SarangIn</div>
+  <div class="body">
+    <div class="co">천국상사(주) · 업력: 태초부터</div>
+    <div class="title">주님의 동역자 채용 — 부르신 만큼 ○명</div>
+    <div class="tags"><span>#정규직</span><span>#평생고용</span><span>#바울처럼</span><span>#다윗처럼</span></div>
+
+    <div class="sec"><h4>담당 업무</h4><ul>
+      <li>하나님을 사랑하고 감사하기</li>
+      <li>복음 전하기</li>
+      <li>주어진 자리에서 빛과 소금 되기</li>
+      <li>형제 자매를 섬기기</li>
+    </ul></div>
+
+    <div class="sec"><h4>우대 사항</h4><ul>
+      <li>심령이 가난한 자</li>
+      <li>애통하는 자</li>
+      <li>온유한 자</li>
+      <li>의에 주리고 목마른 자</li>
+    </ul></div>
+
+    <div class="sec"><h4>급여 및 복리후생</h4><ul>
+      <li>급여: 천국 상급 (누적 적립)</li>
+      <li>성과급: 물 한 잔의 섬김까지 모두 포함 (마 10:42)</li>
+      <li>복리후생: 영생, 세상이 줄 수 없는 평안</li>
+      <li>동행 서비스: 24시간 365일 함께하심</li>
+    </ul></div>
+
+    <div class="sec"><h4>전형 일정</h4><ul>
+      <li>채용 공고: 7월 5일(일)</li>
+      <li>서류 접수 마감: 7월 13일(월)</li>
+      <li>서류 합격 발표: 7월 17일(금)</li>
+      <li>면접 스터디: 7월 19일(일)</li>
+      <li>면접: 8월 8일(토)</li>
+      <li>최종 합격 발표: 8월 16일(일)</li>
+    </ul></div>
+
+    <button class="btn">지원하기</button>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>인트로용 폰 잠금화면 캡처</title>
+<!--
+  인트로 영상 17~19.5초 "알림 도착" 컷 캡처용 페이지 (게임과 무관한 제작 도구).
+  캡처: 크롬에서 열기 → F12 → 기기 모드 → 크기 360×640, DPR 3
+        → 기기 툴바 ⋮ → "Capture screenshot" → 1080×1920 PNG.
+-->
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; width: 100%; overflow: hidden; }
+  body {
+    font-family: "Pretendard", -apple-system, "Segoe UI", "Malgun Gothic", sans-serif;
+    color: #fff;
+  }
+
+  /* ── 배경화면: 아침 하늘 (인트로 클립 F 하늘 톤과 맞춤) ── */
+  .wall {
+    position: fixed; inset: 0; overflow: hidden;
+    background:
+      radial-gradient(120% 55% at 78% 88%, rgba(255,214,150,.75) 0%, rgba(255,214,150,0) 60%),
+      radial-gradient(90% 40% at 20% 70%, rgba(255,255,255,.20) 0%, rgba(255,255,255,0) 70%),
+      linear-gradient(180deg, #2f6bc4 0%, #5b95dc 34%, #93bfe9 62%, #d9e9f4 84%, #ffe3b0 100%);
+  }
+  .cloud { position: absolute; border-radius: 50%; background: #fff; filter: blur(22px); }
+  .c1 { width: 46vw; height: 9vh;  left: -8vw;  top: 20vh; opacity: .50; }
+  .c2 { width: 60vw; height: 10vh; right: -14vw; top: 33vh; opacity: .38; }
+  .c3 { width: 52vw; height: 9vh;  left: 6vw;   top: 55vh; opacity: .30; }
+  .sun {
+    position: absolute; width: 34vw; height: 34vw; right: 4vw; bottom: 6vh;
+    border-radius: 50%; filter: blur(18px);
+    background: radial-gradient(circle, rgba(255,246,220,.95) 0%, rgba(255,226,160,.55) 45%, rgba(255,226,160,0) 72%);
+  }
+
+  .screen { position: fixed; inset: 0; overflow: hidden; display: flex; flex-direction: column; padding: 0 6vw; }
+  .notiwrap, .noti { max-width: 100%; }
+
+  /* ── 상태바 ── */
+  .status {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 1.6vh; font-size: 1.8vh; font-weight: 600;
+    text-shadow: 0 1px 6px rgba(20,50,90,.35);
+  }
+  .status .right { display: flex; align-items: center; gap: 1.2vw; }
+  .status svg { display: block; height: 1.7vh; width: auto; filter: drop-shadow(0 1px 4px rgba(20,50,90,.35)); }
+
+  /* ── 시계 ── */
+  .clockwrap { text-align: center; margin-top: 7vh; text-shadow: 0 2px 14px rgba(20,50,90,.35); }
+  .lock { font-size: 2.2vh; opacity: .85; margin-bottom: 1vh; }
+  .clock { font-size: 11.5vh; font-weight: 200; letter-spacing: .01em; line-height: 1; }
+  .date  { font-size: 2.5vh; font-weight: 500; margin-top: 1.6vh; opacity: .95; }
+
+  /* ── 알림 카드 ── */
+  .notiwrap { margin-top: 6.5vh; }
+  .noti {
+    background: rgba(255,255,255,.86);
+    -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+    border-radius: 2.6vh; padding: 2vh 2.2vh; color: #17181c;
+    box-shadow: 0 10px 34px rgba(20,40,80,.28);
+  }
+  .noti-head { display: flex; align-items: center; gap: 1.6vw; margin-bottom: 1.1vh; }
+  .appicon {
+    width: 3.4vh; height: 3.4vh; border-radius: 28%;
+    background: linear-gradient(145deg, #7f6bf0, #4f46c8);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2vh; color: #fff; flex: none;
+  }
+  .appname { font-size: 1.9vh; font-weight: 600; color: #55565c; flex: 1; }
+  .when { font-size: 1.7vh; color: #8a8b91; }
+  .noti-title { font-size: 2.15vh; font-weight: 700; margin-bottom: .6vh; word-break: keep-all; }
+  .noti-body  { font-size: 2vh; line-height: 1.5; color: #3c3d43; word-break: keep-all; }
+
+  /* ── 하단 ── */
+  .bottom { margin-top: auto; padding-bottom: 2.2vh; }
+  .quick { display: flex; justify-content: space-between; padding: 0 4vw 2.6vh; }
+  .qbtn {
+    width: 6.4vh; height: 6.4vh; border-radius: 50%;
+    background: rgba(255,255,255,.30);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    display: flex; align-items: center; justify-content: center; font-size: 2.8vh;
+    box-shadow: 0 4px 16px rgba(20,50,90,.20);
+  }
+  .homebar { width: 34vw; height: .6vh; border-radius: 99px; background: rgba(255,255,255,.9); margin: 0 auto; }
+</style>
+</head>
+<body>
+  <div class="wall">
+    <div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
+    <div class="sun"></div>
+  </div>
+
+  <div class="screen">
+    <div class="status">
+      <span>SKT</span>
+      <span class="right">
+        <svg viewBox="0 0 18 12" fill="#fff"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1" opacity=".45"/></svg>
+        <svg viewBox="0 0 16 12" fill="#fff"><path d="M8 12 1.6 5.2a9 9 0 0 1 12.8 0Z" opacity=".45"/><path d="M8 12 4 7.7a6 6 0 0 1 8 0Z"/></svg>
+        <svg viewBox="0 0 25 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3" stroke="#fff"/><rect x="2" y="2" width="15" height="8" rx="1.6" fill="#fff"/><path d="M23.5 4v4a2 2 0 0 0 0-4Z" fill="#fff"/></svg>
+      </span>
+    </div>
+
+    <div class="clockwrap">
+      <div class="lock">🔒</div>
+      <div class="clock">12:00</div>
+      <div class="date">7월 5일 일요일</div>
+    </div>
+
+    <div class="notiwrap">
+      <div class="noti">
+        <div class="noti-head">
+          <div class="appicon">✝️</div>
+          <div class="appname">사랑인</div>
+          <div class="when">지금</div>
+        </div>
+        <div class="noti-title">[채용알림] 천국상사(주) 동역자 모집 📢</div>
+        <div class="noti-body">주님의 일을 함께할 '동역자'를 모집합니다. <span style="white-space:nowrap">#바울처럼</span> <span style="white-space:nowrap">#다윗처럼</span></div>
+      </div>
+    </div>
+
+    <div class="bottom">
+      <div class="quick">
+        <div class="qbtn">🔦</div>
+        <div class="qbtn">📷</div>
+      </div>
+      <div class="homebar"></div>
+    </div>
+  </div>
+</body>
+</html>

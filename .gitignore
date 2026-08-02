@@ -1,0 +1,41 @@
+# ═══ 게임에서 사용하지 않는 파일 — 배포(GitHub) 제외 목록 ═══
+
+# ⚠️ GitHub는 파일당 100MB 제한 — 조각말씀 영상(345MB)은 push 자체가 거부됨.
+#    이 영상은 앞 스크린 재생용이므로 진행자 노트북에만 보관하면 됨.
+assets/조각말씀1.mp4
+
+# 제작 소스/중간 산출물 (게임 코드가 참조하지 않음)
+assets/frames/
+assets/Korean_*.jpeg
+assets/Office_*.jpeg
+assets/Man_*.jpeg
+assets/Man_*.mp4
+assets/Woman_*.jpeg
+assets/Photorealistic_*.jpeg
+assets/sheet-*.jpeg
+assets/draft-*.jpeg
+assets/body-*.jpeg
+assets/ending-start.jpeg
+assets/그림11.png
+assets/하계1*.png
+assets/하계2.png
+
+# 구버전 파일명 중복 (게임은 ending-m.mp4 / ending-f.mp4 를 사용)
+assets/ending_m.mp4
+assets/ending_w.mp4
+
+# 루트의 작업용 복사본/자료 폴더 (게임은 assets/ 안의 파일을 사용)
+/start.mp4
+/ending_m.mp4
+/ending_w.mp4
+/kling_*.mp4
+/캡컷조립자료/
+/면접/
+/입사/
+
+# 내부 기획 문서 (공개 repo에 올릴 필요 없음 — 올리고 싶으면 아래 줄 삭제)
+/제작과정.md
+/엔딩-영상-플랜.md
+/인트로-30초-플랜.md
+/플로우-프롬프트.md
+/클링-기능-레퍼런스.md
