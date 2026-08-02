@@ -150,6 +150,63 @@ function showTapStart() {
   });
 }
 
+/* ---------- 게임 시작 게이트 ----------
+   탭 화면 터치 직후 기기를 접속자로 등록(이름 입력 전, 인원수만 집계)하고,
+   진행자가 admin.html 에서 [게임 시작]을 열 때까지 대기.
+   → 전원이 같은 순간에 시작 영상부터 시작 + 그 순간 시작곡 자동 재생 */
+function waitGameStart() {
+  if (Sync.isDemo) return Promise.resolve();
+  return new Promise((resolve) => {
+    const el = screen("wait-screen", `
+      <div class="spinner"></div>
+      <div class="wait-title">접속 완료</div>
+      <div class="wait-count">-</div>
+      <div class="wait-sub">진행자가 게임을 시작하면<br>자동으로 함께 시작됩니다.</div>
+    `);
+    const countEl = el.querySelector(".wait-count");
+    Sync.submit("game_start", { name: "" });
+    Sync.waitForAll("game_start", (done) => {
+      countEl.textContent = `${done}명 접속`;
+    }).then(resolve);
+  });
+}
+
+/* ---------- 에셋 미리 내려받기 (장면 전환 시 사진이 늦게 뜨는 딜레이 방지) ---------- */
+function preloadQueue(urls) {
+  const q = [...new Set(urls)];
+  const next = () => {
+    if (!q.length) return;
+    const img = new Image();
+    img.onload = img.onerror = next;
+    img.src = q.shift();
+  };
+  for (let i = 0; i < 3; i++) next(); // 동시에 3개씩
+}
+function preloadBackgrounds() {
+  // CSS에 등록된 모든 배경 이미지를 수집해 미리 받는다
+  const urls = [];
+  for (const sheet of document.styleSheets) {
+    let rules; try { rules = sheet.cssRules; } catch { continue; }
+    for (const r of rules || []) {
+      const bg = r.style && r.style.backgroundImage;
+      if (!bg) continue;
+      for (const m of bg.matchAll(/url\("?([^")]+)"?\)/g)) urls.push(m[1]);
+    }
+  }
+  preloadQueue(urls);
+}
+function preloadSprites() {
+  // 스토리에 등장하는 스프라이트(선택한 성별)를 전부 미리 받는다
+  const g = player.gender === "male" ? "m" : "f";
+  const urls = [];
+  for (const s of STORY) {
+    if (s.type !== "sprite" || typeof s.value !== "string") continue;
+    if (s.value.endsWith("@g")) urls.push(`assets/sprite-${s.value.slice(0, -2)}-${g}.png`);
+    else if (s.value.startsWith("img:")) urls.push(`assets/${s.value.slice(4).replace(/@[\d,-]*$/, "")}.png`);
+  }
+  preloadQueue(urls);
+}
+
 /* ---------- 시작 영상 (start.mp4 무음 재생) ----------
    영상 자체에 "화면을 터치하세요" 문구가 들어 있음 → 영상이 끝나면
    마지막 프레임에 멈춘 상태로 터치를 기다렸다가 다음으로 진행.
@@ -398,7 +455,11 @@ function showOverlay(step) {
       <div class="overlay-sub">${nl2br(sub(step.sub))}</div>
       <button class="btn" id="doneBtn">${esc(step.button)}</button>
     `);
-    el.querySelector("#doneBtn").onclick = resolve;
+    let done = false, off = () => {};
+    const finish = () => { if (!done) { done = true; off(); resolve(); } };
+    // 진행자가 게이트를 열면 완료 버튼을 누르지 않아도 진행
+    if (step.gate) off = Sync.onGateOpen(step.gate, finish);
+    el.querySelector("#doneBtn").onclick = finish;
   });
 }
 
@@ -818,9 +879,12 @@ async function runStory() {
 }
 
 (async function main() {
-  await showTapStart();   // 첫 터치 → 이후 BGM 자동재생 허용
+  await showTapStart();   // 첫 터치 → 이후 BGM 자동재생 허용 + 전체화면
+  await waitGameStart();  // 진행자가 [게임 시작]을 열 때까지 대기 (접속 인원 집계)
+  preloadBackgrounds();   // 대기 중 배경 이미지 미리 받기
   await showStartVideo(); // start.mp4 시작과 동시에 시작곡 재생 → 끝나면 터치
   await showCreate();     // 형제/자매 선택 + 닉네임
+  preloadSprites();       // 성별 확정 → 스프라이트 미리 받기
   await showIntroVideo();
   await runStory();
 })();

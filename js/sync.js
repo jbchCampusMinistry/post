@@ -10,9 +10,9 @@
        그 게이트에서 기다리던 전원이 동시에 다음 챕터로 넘어갑니다.
 
    게이트 목록 (story.js 의 waitAll key 와 일치해야 함):
+     game_start     → 게임 시작 (탭 화면에서 대기, 진행자가 열면 전원 시작)
      resume_ready   → 지원서 작성 시작 대기
      resume_done    → 지원서 작성 완료
-     study_ready    → 면접 스터디 시작 대기
      study_done     → 면접 스터디 교제 완료
      interview_done → 면접 심사 제출
      plan_written   → 실천 계획 작성 완료
@@ -37,6 +37,9 @@ const DemoSync = {
   submit(key, data) {
     localStorage.setItem("hs_done_" + key, JSON.stringify(data || true));
   },
+
+  // 데모: 게이트 감시 없음 (해제 함수만 반환)
+  onGateOpen() { return () => {}; },
 
   // 데모: 가짜 카운트를 보여주고, 사용자가 화면을 탭하면 통과
   waitForAll(key, onCount) {
@@ -117,6 +120,13 @@ const FirebaseSync = {
       name: (data && data.name) || "",
       t: firebase.database.ServerValue.TIMESTAMP,
     });
+  },
+
+  // 게이트가 열리는 순간 콜백 실행 (오버레이 화면 강제 진행용). 해제 함수 반환
+  onGateOpen(key, cb) {
+    const ref = this._db.ref("gates/" + key + "/open");
+    const h = ref.on("value", (s) => { if (s.val() === true) cb(); });
+    return () => ref.off("value", h);
   },
 
   // 진행자가 admin.html 에서 게이트를 열 때까지 대기

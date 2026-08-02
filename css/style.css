@@ -104,9 +104,9 @@ html, body {
   text-align: center;
   padding: 32px;
   cursor: pointer;
-  /* assets/bg-city.png 가 있으면 도시 사진, 없으면 밝은 하늘 그라데이션 */
+  /* assets/bg-city.jpg 가 있으면 도시 사진, 없으면 밝은 하늘 그라데이션 */
   background:
-    url("../assets/bg-city.png") center / cover no-repeat,
+    url("../assets/bg-city.jpg") center / cover no-repeat,
     linear-gradient(180deg, #9fd7ff 0%, #e3f2ff 45%, #ffd9e8 100%);
 }
 .title-screen::before {
@@ -251,37 +251,37 @@ html, body {
 
 /* 각 장면 배경(인물 없음): assets/ 안에 같은 이름의 이미지를 넣으면 사진이 뜨고,
    없으면 아래 그라데이션이 대신 보입니다. 캐릭터는 스프라이트로 따로 올라갑니다. */
-.bg-room           { background: url("../assets/bg-room.png") center/cover no-repeat, linear-gradient(180deg,#c3d3f0 0%,#93a5cf 55%,#5d6b96 100%); }
-.bg-cafe           { background: url("../assets/bg-cafe.png") center/cover no-repeat, linear-gradient(180deg,#e0cdb0 0%,#b3946f 60%,#77603f 100%); }
-.bg-church         { background: url("../assets/bg-church.png") center/cover no-repeat, linear-gradient(180deg,#f3e6cd 0%,#cdb691 55%,#8f7b58 100%); }
+.bg-room           { background: url("../assets/bg-room.jpg") center/cover no-repeat, linear-gradient(180deg,#c3d3f0 0%,#93a5cf 55%,#5d6b96 100%); }
+.bg-cafe           { background: url("../assets/bg-cafe.jpg") center/cover no-repeat, linear-gradient(180deg,#e0cdb0 0%,#b3946f 60%,#77603f 100%); }
+.bg-church         { background: url("../assets/bg-church.jpg") center/cover no-repeat, linear-gradient(180deg,#f3e6cd 0%,#cdb691 55%,#8f7b58 100%); }
 /* 면접 스터디 모임: 실제 교회 스터디룸 사진 (없으면 bg-church → 그라데이션 순으로 대체) */
-.bg-study          { background: url("../assets/study.png") center/cover no-repeat, url("../assets/bg-church.png") center/cover no-repeat, linear-gradient(180deg,#f3e6cd 0%,#cdb691 55%,#8f7b58 100%); }
-.bg-interview-wait { background: url("../assets/bg-interview-wait.png") center/cover no-repeat, linear-gradient(180deg,#e9e5da 0%,#cfc9ba 55%,#8f8977 100%); }
-.bg-interview-room { background: url("../assets/bg-interview-room.png") center/cover no-repeat, linear-gradient(180deg,#57607a 0%,#3a4157 60%,#232838 100%); }
+.bg-study          { background: url("../assets/study.jpg") center/cover no-repeat, url("../assets/bg-church.jpg") center/cover no-repeat, linear-gradient(180deg,#f3e6cd 0%,#cdb691 55%,#8f7b58 100%); }
+.bg-interview-wait { background: url("../assets/bg-interview-wait.jpg") center/cover no-repeat, linear-gradient(180deg,#e9e5da 0%,#cfc9ba 55%,#8f8977 100%); }
+.bg-interview-room { background: url("../assets/bg-interview-room.jpg") center/cover no-repeat, linear-gradient(180deg,#57607a 0%,#3a4157 60%,#232838 100%); }
 /* 면접관 시점: 지원자(플레이어 자신)가 의자에 앉아 있는 성별별 배경.
    해당 이미지가 없으면 빈 의자(bg-interview-room.png) → 그라데이션 순으로 대체 */
-.bg-interview-room-m { background: url("../assets/bg-interview-room-m.png") center/cover no-repeat, url("../assets/bg-interview-room.png") center/cover no-repeat, linear-gradient(180deg,#57607a 0%,#3a4157 60%,#232838 100%); }
-.bg-interview-room-f { background: url("../assets/bg-interview-room-f.png") center/cover no-repeat, url("../assets/bg-interview-room.png") center/cover no-repeat, linear-gradient(180deg,#57607a 0%,#3a4157 60%,#232838 100%); }
+.bg-interview-room-m { background: url("../assets/bg-interview-room-m.jpg") center/cover no-repeat, url("../assets/bg-interview-room.jpg") center/cover no-repeat, linear-gradient(180deg,#57607a 0%,#3a4157 60%,#232838 100%); }
+.bg-interview-room-f { background: url("../assets/bg-interview-room-f.jpg") center/cover no-repeat, url("../assets/bg-interview-room.jpg") center/cover no-repeat, linear-gradient(180deg,#57607a 0%,#3a4157 60%,#232838 100%); }
 /* 최종 발표 대기: 노트북에 평범한 대기 화면이 떠 있는 카페 */
-.bg-cafe-wait      { background: url("../assets/bg-cafe-wait.png") center/cover no-repeat, url("../assets/bg-cafe.png") center/cover no-repeat, linear-gradient(180deg,#e0cdb0 0%,#b3946f 60%,#77603f 100%); }
+.bg-cafe-wait      { background: url("../assets/bg-cafe-wait.jpg") center/cover no-repeat, url("../assets/bg-cafe.jpg") center/cover no-repeat, linear-gradient(180deg,#e0cdb0 0%,#b3946f 60%,#77603f 100%); }
 /* 최종 합격 확인: 노트북에 합격 화면이 떠 있는 카페 */
-.bg-cafe-pass      { background: url("../assets/bg-cafe-pass.png") center/cover no-repeat, url("../assets/bg-cafe.png") center/cover no-repeat, linear-gradient(180deg,#e0cdb0 0%,#b3946f 60%,#77603f 100%); }
-.bg-cafe-fail      { background: url("../assets/cafenonpass.png") center/cover no-repeat, url("../assets/bg-cafe.png") center/cover no-repeat, linear-gradient(180deg,#e0cdb0 0%,#b3946f 60%,#77603f 100%); }
-.bg-office-in      { background: url("../assets/bg-office-in.png") center/cover no-repeat, linear-gradient(180deg,#dfe7f2 0%,#aebcd2 55%,#71809c 100%); }
-.bg-subway         { background: url("../assets/bg-subway.jpeg") center/cover no-repeat, linear-gradient(180deg,#d9dee6 0%,#aab3c2 55%,#6d7688 100%); }
+.bg-cafe-pass      { background: url("../assets/bg-cafe-pass.jpg") center/cover no-repeat, url("../assets/bg-cafe.jpg") center/cover no-repeat, linear-gradient(180deg,#e0cdb0 0%,#b3946f 60%,#77603f 100%); }
+.bg-cafe-fail      { background: url("../assets/cafenonpass.jpg") center/cover no-repeat, url("../assets/bg-cafe.jpg") center/cover no-repeat, linear-gradient(180deg,#e0cdb0 0%,#b3946f 60%,#77603f 100%); }
+.bg-office-in      { background: url("../assets/bg-office-in.jpg") center/cover no-repeat, linear-gradient(180deg,#dfe7f2 0%,#aebcd2 55%,#71809c 100%); }
+.bg-subway         { background: url("../assets/bg-subway.jpg") center/cover no-repeat, linear-gradient(180deg,#d9dee6 0%,#aab3c2 55%,#6d7688 100%); }
 /* 프롤로그 0: 하계수양회 사진 */
-.bg-retreat-out    { background: url("../assets/bg-retreat-out.jpeg") center/cover no-repeat, linear-gradient(180deg,#7fa8d9 0%,#a8c4e2 55%,#8b97ad 100%); }
-.bg-retreat        { background: url("../assets/bg-retreat.jpeg") center/cover no-repeat, linear-gradient(180deg,#2b3a6b 0%,#41548f 55%,#1c2440 100%); }
+.bg-retreat-out    { background: url("../assets/bg-retreat-out.jpg") center/cover no-repeat, linear-gradient(180deg,#7fa8d9 0%,#a8c4e2 55%,#8b97ad 100%); }
+.bg-retreat        { background: url("../assets/bg-retreat.jpg") center/cover no-repeat, linear-gradient(180deg,#2b3a6b 0%,#41548f 55%,#1c2440 100%); }
 /* 인트로 내레이션: 도시 전경 */
-.bg-city           { background: url("../assets/bg-city.png") center/cover no-repeat, linear-gradient(180deg,#9fd7ff 0%,#e3f2ff 45%,#ffd9e8 100%); }
+.bg-city           { background: url("../assets/bg-city.jpg") center/cover no-repeat, linear-gradient(180deg,#9fd7ff 0%,#e3f2ff 45%,#ffd9e8 100%); }
 /* 면접 후 귀갓길: 노을 진 골목 */
-.bg-alley          { background: url("../assets/bg-alley.png") center/cover no-repeat, linear-gradient(180deg,#f2b28c 0%,#c77e6a 55%,#5d4a63 100%); }
+.bg-alley          { background: url("../assets/bg-alley.jpg") center/cover no-repeat, linear-gradient(180deg,#f2b28c 0%,#c77e6a 55%,#5d4a63 100%); }
 /* 설교 후 더 어두워진 귀갓길: bg-alley-dusk.png 가 없으면 기존 bg-alley → 그라데이션 순으로 대체 */
-.bg-alley-dusk     { background: url("../assets/bg-alley-dusk.png") center/cover no-repeat, url("../assets/bg-alley.png") center/cover no-repeat, linear-gradient(180deg,#8a6a7a 0%,#5d4a63 55%,#2a2338 100%); }
+.bg-alley-dusk     { background: url("../assets/bg-alley-dusk.jpg") center/cover no-repeat, url("../assets/bg-alley.jpg") center/cover no-repeat, linear-gradient(180deg,#8a6a7a 0%,#5d4a63 55%,#2a2338 100%); }
 /* 교회 대강당 내부: bg-hall.png 가 없으면 스터디 모임(bg-church) → 그라데이션 순으로 대체 */
-.bg-hall           { background: url("../assets/bg-hall.png") center/cover no-repeat, url("../assets/bg-church.png") center/cover no-repeat, linear-gradient(180deg,#f3e6cd 0%,#cdb691 55%,#8f7b58 100%); }
+.bg-hall           { background: url("../assets/bg-hall.png") center/cover no-repeat, url("../assets/bg-church.jpg") center/cover no-repeat, linear-gradient(180deg,#f3e6cd 0%,#cdb691 55%,#8f7b58 100%); }
 /* 발길이 멈춘 교회 외관 (저녁, 불 켜진) */
-.bg-church-out     { background: url("../assets/bg-church-out.png") center/cover no-repeat, linear-gradient(180deg,#e8956d 0%,#8a5a68 55%,#2e2a44 100%); }
+.bg-church-out     { background: url("../assets/bg-church-out.jpg") center/cover no-repeat, linear-gradient(180deg,#e8956d 0%,#8a5a68 55%,#2e2a44 100%); }
 .bg-light          { background: radial-gradient(ellipse at 50% 30%, #fff7dd 0%, #f0dda2 35%, #b28f3e 100%); }
 .vn-sprite {
   /* 상반신 크게 보이기: 이미지를 화면보다 크게(92dvh) 키우고

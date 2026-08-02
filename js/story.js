@@ -193,6 +193,7 @@ const STORY = [
     title: "지원서 작성 중",
     sub: "책상 위에 놓인 지원서를 작성해 주세요.\n다 작성하셨다면 아래 버튼을 눌러 주세요.",
     button: "작성 완료",
+    gate: "resume_done", /* 진행자가 ②를 열면 완료를 안 눌러도 진행 */
   },
   { type: "waitAll",
     key: "resume_done",
@@ -254,17 +255,12 @@ const STORY = [
   { type: "sprite", value: "think@g" },
   { type: "say", speaker: "%NAME%", text: "(주님을 위해 살아온 이야기라… 막상 말하려니, 나는 뭐라고 하지?)" },
 
-  /* ⛔ 진행자 게이트: 전원 도착 → 진행자가 열면 교제 시작 */
-  { type: "waitAll",
-    key: "study_ready",
-    title: "잠시 기다려 주세요",
-    sub: "모든 스터디원이 모이면\n진행자가 교제를 시작합니다." },
-
   { type: "overlay",
     icon: "💬",
     title: "면접 스터디 중",
     sub: "지원서에 적은 내용을 바탕으로,\n지금까지 주님을 위해 무엇을 해왔는지 교제해 주세요.\n교제가 끝나면 완료 버튼을 눌러 주세요.",
     button: "완료",
+    gate: "study_done", /* 진행자가 ③을 열면 완료를 안 눌러도 진행 */
   },
   { type: "waitAll",
     key: "study_done",
@@ -444,8 +440,7 @@ const STORY = [
     ],
     button: "확인",
   },
-  { type: "bg", value: "bg-cafe", if: { flag: "verdict", value: "fail" } },
-  { type: "sprite", value: "cry@g", if: { flag: "verdict", value: "fail" } },
+  { type: "sprite", value: "cry@g", if: { flag: "verdict", value: "fail" } }, /* 배경은 불합격 화면 유지 */
   { type: "say-if", flag: "verdict", value: "fail",
     lines: [
       { speaker: "%NAME%", text: "추가… 합격? 인사팀에서는 불합격이었는데… 사장님이, 직접…?" },
@@ -502,6 +497,7 @@ const STORY = [
     title: "계획서 작성 중",
     sub: "나눠 드린 종이에 “이제 주님을 위해 어떻게 살 것인지”\n구체적인 실천 계획을 적어 주세요.\n작성이 끝나면 아래 버튼을 눌러 주세요.",
     button: "작성 완료",
+    gate: "plan_written", /* 진행자가 ⑤를 열면 완료를 안 눌러도 진행 */
   },
   { type: "waitAll",
     key: "plan_written",
@@ -513,6 +509,7 @@ const STORY = [
     title: "교제 나누는 중",
     sub: "작성한 실천 계획을 형제자매님들과 함께 나눠 주세요.\n교제가 끝나면 아래 버튼을 눌러 주세요.",
     button: "교제 완료",
+    gate: "plan_done", /* 진행자가 ⑥을 열면 완료를 안 눌러도 진행 */
   },
   { type: "waitAll",
     key: "plan_done",
