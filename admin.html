@@ -173,11 +173,12 @@ const POINTS = [
   { key: "scene_church",   type: "auto",   label: "🎵 교회 — 스터디 모임",       desc: "스터디 모임 장소 도착. 대사 후 바로 교제(간증 나눔)로 이어짐." },
   { key: "study_done",     type: "manual", label: "③ 면접 스터디 — 완료",       desc: "교제를 마친 인원. 열면 아직 완료를 안 누른 사람도 함께 면접 당일로." },
   { key: "scene_interview", type: "auto",  label: "🎵 면접장 — 면접 당일",       desc: "면접 대기 → 면접관 시점 전환 → 심사." },
-  { key: "interview_done", type: "manual", label: "④ 면접 심사 — 제출 완료",    desc: "심사를 제출한 인원. 열면 낙담한 귀갓길(🎵자동) → 교회 대강당 → 조각말씀 안내로." },
+  { key: "interview_done", type: "manual", label: "④ 면접 심사 — 제출 완료",    desc: "심사를 제출한 인원. 열면 낙담한 귀갓길(🎵자동) → 교회 대강당 → 조각말씀 화면으로." },
+  { key: "sermon_done",    type: "manual", label: "⑤ 조각말씀 — 말씀 종료",     desc: "조각말씀 화면에 도착한 인원 (전원 도착 시 🎵 자동 정지 → 영상 재생). 말씀이 끝나면 열어 주세요 — 전원 동시 진행 + 귀갓길 곡 자동 재개." },
   { key: "scene_cafe2",    type: "auto",   label: "🎵 카페 — 최종 발표",         desc: "최종 합격 확인 → 사원증 발급." },
   { key: "scene_subway",   type: "auto",   label: "🎵 지하철 — 출근 첫날",       desc: "입사하기 버튼 이후 출근길 지하철. 실천 계획 작성으로 이어짐." },
-  { key: "plan_written",   type: "manual", label: "⑤ 실천 계획 — 작성 완료",    desc: "계획서 작성을 마친 인원. 전원 확인 후 열면 교제 시작 (🎵 이 시점에 음악 자동 정지)." },
-  { key: "plan_done",      type: "manual", label: "⑥ 실천 계획 — 교제 완료",    desc: "교제를 마친 인원. 열면 엔딩 영상 시작 (+ 엔딩곡 자동 재생)." },
+  { key: "plan_written",   type: "manual", label: "⑥ 실천 계획 — 작성 완료",    desc: "계획서 작성을 마친 인원. 전원 확인 후 열면 교제 시작 (🎵 이 시점에 음악 자동 정지)." },
+  { key: "plan_done",      type: "manual", label: "⑦ 실천 계획 — 교제 완료",    desc: "교제를 마친 인원. 열면 엔딩 영상 시작 (+ 엔딩곡 자동 재생)." },
 ];
 
 /* --- PIN --- */
@@ -207,7 +208,7 @@ const BGM_TRACKS = {
   scene_room2: { file: "assets/pass_bgm.mp3",   name: "서류 합격" },
   // 심사 제출 ④를 여는 순간 자동 재생 → 전원이 조각말씀 화면에 도착하면 자동 정지
   interview_done: { file: "assets/alley_bgm.mp3", name: "면접 후 귀갓길" },
-  // 전원이 「말씀 다 들었어요」를 누르면 자동 재개 (같은 곡)
+  // 진행자가 ⑤(말씀 종료)를 여는 순간 자동 재개 (같은 곡)
   sermon_done: { file: "assets/alley_bgm.mp3", name: "설교 후 귀갓길" },
   scene_cafe2: { file: "assets/cafe2_bgm.mp3",  name: "최종 합격 카페" },
   plan_done:   { file: "assets/ending_bgm.mp3", name: "엔딩" },        // ⑥ 교제 완료 여는 순간 = 엔딩 영상 시작
@@ -215,9 +216,10 @@ const BGM_TRACKS = {
 /* 자동 정지 지점: 전원 도착(28/28) 순간 음악 끔.
    - resume_ready: 지원서 작성 대기 전원 도착 → 작성 중 무음
    - scene_church: 스터디 장소 전원 도착 → 스터디는 브금 없음
-   - plan_written: 계획서 작성 전원 완료 → 교제 중 무음 (엔딩곡은 ⑥에서 자동 재생)
+   - sermon_done: 조각말씀 화면 전원 도착 → 말씀 중 무음 (⑤ 열면 자동 재개)
+   - plan_written: 계획서 작성 전원 완료 → 교제 중 무음 (엔딩곡은 ⑦에서 자동 재생)
    ⚠️ 계획서 작성 '시작' 시점은 감지 불가 → 작성 중에도 끄려면 ⏹ 수동 정지 */
-const BGM_STOPS = { resume_ready: true, scene_church: true, plan_written: true };
+const BGM_STOPS = { resume_ready: true, scene_church: true, sermon_done: true, plan_written: true };
 const bgmStopped = new Set();
 const bgm = new Audio();
 bgm.loop = true;
@@ -406,26 +408,6 @@ function start() {
         db.ref(`gates/${g.key}`).set({ open: true, openedAt: firebase.database.ServerValue.TIMESTAMP });
       }
     };
-  });
-
-  /* 조각말씀 BGM 자동화 (게이트 카드 없는 신호 지점 — story.js 의 mark 스텝)
-     - sermon_ready: 전원이 조각말씀 화면에 도착 → 귀갓길 곡 자동 정지
-     - sermon_done : 전원이 「말씀 다 들었어요」 누름 → 같은 곡 자동 재개 */
-  let srFirst = true;
-  db.ref("arrivals/sermon_ready").on("value", (s) => {
-    if (totalUsers > 0 && s.numChildren() >= totalUsers && !bgmStopped.has("sermon_ready")) {
-      bgmStopped.add("sermon_ready");
-      if (!srFirst) stopBgm();
-    }
-    srFirst = false;
-  });
-  let sdFirst = true;
-  db.ref("arrivals/sermon_done").on("value", (s) => {
-    if (totalUsers > 0 && s.numChildren() >= totalUsers && !bgmPlayed.has("sermon_done")) {
-      if (sdFirst) bgmPlayed.add("sermon_done");
-      else playBgm("sermon_done");
-    }
-    sdFirst = false;
   });
 
   /* 전체 초기화 */

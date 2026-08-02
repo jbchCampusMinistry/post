@@ -355,14 +355,12 @@ const STORY = [
   { type: "place", value: "교회 대강당" },
   { type: "say", text: "%NAME_EUN% 홀린 듯 대강당 뒷자리에 조용히 앉았다. 마침 강단에서 말씀이 선포되고 있었다." },
 
-  { type: "mark", key: "sermon_ready" }, /* 전원 도착 → 진행자 콘솔 BGM 자동 정지 */
-  { type: "cue",
-    icon: "✝️",
-    title: "말씀이 선포되고 있습니다",
-    sub: "대강당 뒷자리에 앉았습니다.\n잠시 화면에서 눈을 떼고, 앞의 스크린(강단)을 봐 주세요.\n설교가 끝나면 아래 버튼을 눌러 주세요.",
-    button: "말씀 다 들었어요",
-  },
-  { type: "mark", key: "sermon_done" }, /* 전원 완료 → 귀갓길 곡 자동 재개 */
+  /* ⛔ 진행자 게이트: 전원 도착 시 BGM 자동 정지 → 말씀이 끝나면
+     진행자가 ⑤를 열어야 전원 동시 진행 (+ 귀갓길 곡 자동 재개) */
+  { type: "waitAll",
+    key: "sermon_done",
+    title: "✝️ 말씀이 선포되고 있습니다",
+    sub: "대강당 뒷자리에 앉았습니다.\n잠시 화면에서 눈을 떼고, 앞의 스크린(강단)을 봐 주세요.\n말씀이 끝나면 진행자가 다음으로 진행합니다." },
 
   /* ───────── 설교 후: 달라진 발걸음 (assets/bg-alley-dusk.png — 더 어두워진 귀갓길) ───────── */
   { type: "bgm", play: "alley" }, /* 🎵 같은 곡 이어서 재생 — 최종 발표 카페 전까지 */
@@ -499,7 +497,7 @@ const STORY = [
     title: "계획서 작성 중",
     sub: "나눠 드린 종이에 “이제 주님을 위해 어떻게 살 것인지”\n구체적인 실천 계획을 적어 주세요.\n작성이 끝나면 아래 버튼을 눌러 주세요.",
     button: "작성 완료",
-    gate: "plan_written", /* 진행자가 ⑤를 열면 완료를 안 눌러도 진행 */
+    gate: "plan_written", /* 진행자가 ⑥을 열면 완료를 안 눌러도 진행 */
   },
   { type: "waitAll",
     key: "plan_written",
@@ -511,7 +509,7 @@ const STORY = [
     title: "교제 나누는 중",
     sub: "작성한 실천 계획을 형제자매님들과 함께 나눠 주세요.\n교제가 끝나면 아래 버튼을 눌러 주세요.",
     button: "교제 완료",
-    gate: "plan_done", /* 진행자가 ⑥을 열면 완료를 안 눌러도 진행 */
+    gate: "plan_done", /* 진행자가 ⑦을 열면 완료를 안 눌러도 진행 */
   },
   { type: "waitAll",
     key: "plan_done",
