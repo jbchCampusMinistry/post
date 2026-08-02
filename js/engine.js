@@ -164,6 +164,7 @@ function waitGameStart() {
       <div class="wait-sub">진행자가 게임을 시작하면<br>자동으로 함께 시작됩니다.</div>
     `);
     const countEl = el.querySelector(".wait-count");
+    Sync.connect(); // 전체 참가자 수에 즉시 집계 (이름은 입력 후 채워짐)
     Sync.submit("game_start", { name: "" });
     Sync.waitForAll("game_start", (done) => {
       countEl.textContent = `${done}명 접속`;

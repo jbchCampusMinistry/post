@@ -132,10 +132,9 @@
   <div class="panel">
     <h3>🎵 BGM <span class="cnt" id="bgmNow">⏹ 정지됨</span></h3>
     <div class="desc" style="font-size:12px;color:rgba(255,255,255,.45);margin-bottom:2px;line-height:1.7">
-      방·서류합격·카페 곡 = 전원 도착 시 <b>자동 재생</b> ·
-      지원서 작성 대기·스터디 도착 = <b>자동 정지</b><br>
-      수동 조작 3가지: ▶ <b>시작</b>(참가자 접속 시) ·
-      ⏹ <b>정지</b>(계획서 작성 안내 때) · ▶ <b>엔딩</b>(앞 스크린 마지막 영상 끝난 직후)
+      시작(게임 시작)·방·서류합격·귀갓길(④)·카페·엔딩(⑥) = 게이트 열림/전원 도착 시 <b>자동 재생</b> ·
+      지원서 작성 대기·스터디 도착·계획서 전원 작성 = <b>자동 정지</b><br>
+      수동 조작 2가지: ⏹ <b>정지</b>(조각말씀 시작 직전) · ▶ <b>면접 후 귀갓길</b>(말씀 끝난 직후 다시)
     </div>
     <div class="bgm-btns" id="bgmBtns"></div>
     <div class="bgm-vol">🔊 <input type="range" id="bgmVol" min="0" max="100" value="80"> <span id="bgmVolTxt">80%</span></div>
@@ -302,14 +301,17 @@ function start() {
   firebase.initializeApp(FIREBASE_CONFIG);
   const db = firebase.database();
 
-  /* 전체 참가자 실시간 */
+  /* 전체 참가자 실시간 — 접속(이름 입력 전)한 기기도 인원수에 포함 */
   db.ref("users").on("value", (snap) => {
     const v = snap.val() || {};
+    const total = Object.keys(v).length;
     const names = Object.values(v).map((u) => u && u.name).filter(Boolean);
-    document.getElementById("userCnt").textContent = names.length + "명";
-    document.getElementById("userNames").innerHTML = names.length
-      ? names.map((n) => `<span>${esc(n)}</span>`).join("")
-      : `<span class="empty">아직 입장한 참가자가 없습니다</span>`;
+    const unnamed = total - names.length;
+    document.getElementById("userCnt").textContent = total + "명";
+    let html = names.map((n) => `<span>${esc(n)}</span>`).join("");
+    if (unnamed > 0) html += `<span class="empty">이름 입력 전 ${unnamed}명</span>`;
+    document.getElementById("userNames").innerHTML =
+      html || `<span class="empty">아직 입장한 참가자가 없습니다</span>`;
   });
 
   /* 게이트 카드 생성 */

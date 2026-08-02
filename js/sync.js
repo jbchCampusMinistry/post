@@ -38,6 +38,9 @@ const DemoSync = {
     localStorage.setItem("hs_done_" + key, JSON.stringify(data || true));
   },
 
+  // 데모: 접속 등록 없음
+  connect() {},
+
   // 데모: 게이트 감시 없음 (해제 함수만 반환)
   onGateOpen() { return () => {}; },
 
@@ -100,6 +103,13 @@ const FirebaseSync = {
       const v = snap.val() || {};
       this._names = Object.values(v).map((u) => u && u.name).filter(Boolean);
       this._total = Object.keys(v).length;
+    });
+  },
+
+  // 접속 등록 (탭 화면 직후, 이름 입력 전) — 전체 참가자 수에 바로 집계됨
+  connect() {
+    this._db.ref("users/" + this._uid).update({
+      connectedAt: firebase.database.ServerValue.TIMESTAMP,
     });
   },
 
