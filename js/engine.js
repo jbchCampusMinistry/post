@@ -819,7 +819,7 @@ function showWhitein() {
   });
 }
 
-/* ---------- 최종 합격자 명단 (마지막 화면 — 5열 격자) ---------- */
+/* ---------- 최종 합격자 명단 (마지막 화면 — 3열 격자) ---------- */
 function showCredits() {
   vn.el = null;
   return new Promise(() => { // 마지막 화면 — 여기서 게임 종료 (머무름)
@@ -831,7 +831,7 @@ function showCredits() {
       <div class="roster-grid">
         ${list.map((n, i) => `<div class="roster-name" style="animation-delay:${Math.min(i * 0.06, 2.4)}s">${esc(n)}</div>`).join("")}
       </div>
-      <div class="roster-msg">합격을 진심으로 축하드립니다.<br>기념 촬영이 있으니 앞으로 나와 주세요. 📸</div>
+      <div class="roster-msg">합격을 진심으로 축하드립니다.</div>
     `);
   });
 }

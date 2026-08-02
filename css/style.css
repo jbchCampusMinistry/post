@@ -223,13 +223,13 @@ html, body {
 }
 .roster-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 10px 4px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px 8px;
   width: 100%;
   margin-bottom: 34px;
 }
 .roster-name {
-  font-size: 14px;
+  font-size: 19px;
   font-weight: 700;
   color: #fff;
   text-align: center;

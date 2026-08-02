@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>최종 합격자 명단 — 천국상사(주)</title>
+<style>
+/* TV/빔 스크린용 전체화면 합격자 명단 (가로 화면 기준) */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  background:
+    radial-gradient(ellipse at 50% -10%, rgba(232,201,106,.28), transparent 55%),
+    radial-gradient(ellipse at 15% 110%, rgba(109,141,255,.14), transparent 50%),
+    linear-gradient(180deg, #1a1f38 0%, #0d0f1a 100%);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2.6vh;
+  padding: 4vh 5vw;
+  cursor: pointer; /* 화면 클릭 → 전체화면 */
+}
+.badge {
+  font-size: 2.4vh;
+  letter-spacing: .3em;
+  color: rgba(255,255,255,.6);
+}
+h1 {
+  font-size: 7vh;
+  font-weight: 900;
+  letter-spacing: .14em;
+  color: #e8c96a;
+  text-shadow: 0 6px 30px rgba(232,201,106,.35);
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 5), 1fr);
+  gap: 2.6vh 3vw;
+  width: 100%;
+  max-width: 92vw;
+  margin-top: 1.5vh;
+}
+.name {
+  font-size: var(--name-size, 4.6vh);
+  font-weight: 800;
+  text-align: center;
+  word-break: keep-all;
+  white-space: nowrap;
+  animation: pop .6s ease both;
+}
+@keyframes pop { from { transform: translateY(2.4vh); opacity: 0; } to { transform: none; opacity: 1; } }
+.msg {
+  font-size: 2.8vh;
+  color: rgba(255,255,255,.85);
+  margin-top: 1vh;
+}
+.empty { font-size: 3vh; color: rgba(255,255,255,.45); }
+</style>
+</head>
+<body>
+<div class="badge">✝️ 천국상사(주) · HEAVEN &amp; CO.</div>
+<h1>최종 합격자 명단</h1>
+<div class="grid" id="grid"><div class="empty">참가자를 기다리는 중…</div></div>
+<div class="msg">합격을 진심으로 축하드립니다 🎉</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script>
+firebase.initializeApp(FIREBASE_CONFIG);
+const grid = document.getElementById("grid");
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+firebase.database().ref("users").on("value", (snap) => {
+  const v = snap.val() || {};
+  const names = Object.values(v).map((u) => u && u.name).filter(Boolean);
+  if (!names.length) {
+    grid.innerHTML = `<div class="empty">참가자를 기다리는 중…</div>`;
+    return;
+  }
+  // 인원수에 맞춰 열 수·글자 크기 자동 조절 (TV 한 화면에 전부 표시)
+  const cols = names.length <= 9 ? 3 : names.length <= 20 ? 4 : names.length <= 35 ? 5 : 6;
+  const rows = Math.ceil(names.length / cols);
+  grid.style.setProperty("--cols", cols);
+  grid.style.setProperty("--name-size", Math.min(5.2, 52 / rows / 1.6) + "vh");
+  grid.innerHTML = names
+    .map((n, i) => `<div class="name" style="animation-delay:${Math.min(i * 0.08, 3)}s">${esc(n)}</div>`)
+    .join("");
+});
+
+// 화면 아무 곳이나 클릭 → 전체화면 (TV에서 브라우저 UI 숨김)
+document.body.onclick = () => {
+  const rt = document.documentElement;
+  if (!document.fullscreenElement && rt.requestFullscreen) rt.requestFullscreen().catch(() => {});
+};
+</script>
+</body>
+</html>
