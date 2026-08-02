@@ -141,7 +141,12 @@ function showTapStart() {
     const el = screen("tap-screen", `
       <div class="tap-wait">잠시만 기다려 주세요<span class="dots"></span></div>
     `);
-    el.onclick = resolve;
+    el.onclick = () => {
+      // 첫 터치를 이용해 전체화면 전환 → 주소창 숨김 (미지원 브라우저는 그냥 진행)
+      const rt = document.documentElement;
+      if (rt.requestFullscreen) rt.requestFullscreen({ navigationUI: "hide" }).catch(() => {});
+      resolve();
+    };
   });
 }
 
