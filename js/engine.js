@@ -591,9 +591,15 @@ function showSyncPoint(step) {
     `);
     const countEl = el.querySelector(".wait-count");
     Sync.submit(step.key, { name: player.fullName });
-    Sync.waitForBarrier(step.key, (done, total) => {
-      countEl.textContent = `${done} / ${total}`;
-    }).then(resolve);
+    // 조건이 이미 충족돼 있어도(마지막 도착자) 대기 화면을 최소 2초 보여줘서
+    // 장면·음악 전환이 뚝 끊기지 않고 자연스럽게 이어지도록 함
+    const minHold = new Promise((r) => setTimeout(r, 2000));
+    Promise.all([
+      Sync.waitForBarrier(step.key, (done, total) => {
+        countEl.textContent = `${done} / ${total}`;
+      }),
+      minHold,
+    ]).then(resolve);
   });
 }
 
