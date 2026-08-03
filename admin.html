@@ -356,6 +356,7 @@ function start() {
     wrap.appendChild(card);
 
     let arrivedCnt = 0;
+    let gateOpen = false; // 이 게이트가 열려 있는지 (카드 표시 원복 판단용)
     let arrFirst = true;  // 첫 스냅샷(콘솔 새로고침 복구)에서는 BGM 재생 안 함
     db.ref("arrivals/" + g.key).on("value", (snap) => {
       const v = snap.val() || {};
@@ -375,6 +376,12 @@ function start() {
         // 전원 도착 = 씬 시작 순간 → BGM 자동 재생
         if (arrFirst) bgmPlayed.add(g.key);
         else if (!bgmPlayed.has(g.key)) playBgm(g.key);
+      } else if (isAuto && !gateOpen && arrivedCnt === 0) {
+        // 전체 초기화 등으로 기록이 비면 카드 표시 원복
+        const st = document.getElementById(`state-${g.key}`);
+        st.textContent = "⏳ 대기 중";
+        st.className = "state wait";
+        card.classList.remove("open");
       }
       // 자동 정지 지점: 전원 도착 순간 음악 끔 (수동 게이트 포함)
       if (BGM_STOPS[g.key] && totalUsers > 0 && arrivedCnt >= totalUsers && !bgmStopped.has(g.key)) {
@@ -387,15 +394,22 @@ function start() {
     let gateFirst = true;
     db.ref(`gates/${g.key}/open`).on("value", (snap) => {
       const open = snap.val() === true;
+      gateOpen = open;
+      const st = document.getElementById(`state-${g.key}`);
       if (open) {
         card.classList.add("open");
-        const st = document.getElementById(`state-${g.key}`);
         st.textContent = isAuto ? "✅ 강제 진행됨" : "✅ 진행됨";
         st.className = "state open";
         document.getElementById(`btn-${g.key}`).disabled = true;
         // 게이트 오픈(수동 진행/강제 진행) 순간 → BGM 자동 재생
         if (gateFirst) bgmPlayed.add(g.key);
         else if (!bgmPlayed.has(g.key)) playBgm(g.key);
+      } else if (!gateFirst) {
+        // 전체 초기화로 게이트가 닫히면 카드 표시 원복
+        card.classList.remove("open");
+        st.textContent = "⏳ 대기 중";
+        st.className = "state wait";
+        document.getElementById(`btn-${g.key}`).disabled = false;
       }
       gateFirst = false;
     });

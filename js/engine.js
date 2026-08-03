@@ -217,18 +217,14 @@ function showResumePrompt(save) {
 function waitGameStart() {
   if (Sync.isDemo) return Promise.resolve();
   return new Promise((resolve) => {
-    const el = screen("wait-screen", `
-      <div class="spinner"></div>
-      <div class="wait-title">접속 완료</div>
-      <div class="wait-count">-</div>
-      <div class="wait-sub">진행자가 게임을 시작하면<br>자동으로 함께 시작됩니다.</div>
+    // 참가자에게는 탭 화면과 똑같은 "잠시만 기다려 주세요"만 보여줌
+    // (접속 인원은 진행자 콘솔에서만 확인)
+    screen("tap-screen", `
+      <div class="tap-wait">잠시만 기다려 주세요<span class="dots"></span></div>
     `);
-    const countEl = el.querySelector(".wait-count");
     Sync.connect(); // 전체 참가자 수에 즉시 집계 (이름은 입력 후 채워짐)
     Sync.submit("game_start", { name: "" });
-    Sync.waitForAll("game_start", (done) => {
-      countEl.textContent = `${done}명 접속`;
-    }).then(resolve);
+    Sync.waitForAll("game_start", () => {}).then(resolve);
   });
 }
 
