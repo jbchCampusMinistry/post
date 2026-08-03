@@ -433,11 +433,13 @@ function start() {
       db.ref("users").remove(),
       db.ref("arrivals").remove(),
       db.ref("gates").remove(),
+      // 초기화 방송: 접속 중인 폰은 즉시 처음으로 리셋, 재접속 폰도 이전 기록 자동 폐기
+      db.ref("reset").set({ at: firebase.database.ServerValue.TIMESTAMP }),
     ]).then(() => {
       stopBgm();
       bgmPlayed.clear();  // 다음 회차에서 BGM 자동 재생 다시 작동
       bgmStopped.clear(); // 자동 정지 지점도 재작동
-      alert("초기화 완료. 참가자들은 페이지를 새로고침해서 처음부터 시작하면 됩니다.");
+      alert("초기화 완료. 접속 중인 참가자 폰은 자동으로 처음 화면으로 돌아갑니다.");
     });
   };
 }

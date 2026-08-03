@@ -939,7 +939,16 @@ async function runStory(startAt = 0) {
   keepAwake();            // 화면 꺼짐 방지
 
   // 진행하던 기록이 있으면 이어하기 제안
-  const save = loadSave();
+  // (단, 진행자가 그 이후에 전체 초기화를 했다면 기록을 폐기하고 처음부터)
+  let save = loadSave();
+  if (save) {
+    const resetAt = await Sync.fetchResetAt();
+    if (resetAt && save.ts < resetAt) {
+      localStorage.removeItem(SAVE_KEY);
+      localStorage.removeItem("hs_idcard");
+      save = null;
+    }
+  }
   let resumeAt = -1;
   if (save) {
     if (await showResumePrompt(save)) {

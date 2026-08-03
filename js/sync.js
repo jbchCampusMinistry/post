@@ -43,6 +43,9 @@ const DemoSync = {
   // 데모: 접속 등록 없음
   connect() {},
 
+  // 데모: 초기화 개념 없음
+  fetchResetAt() { return Promise.resolve(0); },
+
   // 데모: 게이트 감시 없음 (해제 함수만 반환)
   onGateOpen() { return () => {}; },
 
@@ -93,6 +96,19 @@ const FirebaseSync = {
   _init() {
     firebase.initializeApp(FIREBASE_CONFIG);
     this._db = firebase.database();
+    // 진행자 [전체 초기화] 방송 감지: 접속 중이던 폰은 저장 기록을 지우고 즉시 처음부터
+    this._resetAt = null;
+    this._db.ref("reset/at").on("value", (s) => {
+      const t = s.val() || 0;
+      if (this._resetAt === null) { this._resetAt = t; return; } // 첫 스냅샷은 기준값
+      if (t !== this._resetAt) {
+        try {
+          localStorage.removeItem("hs_save");
+          localStorage.removeItem("hs_idcard");
+        } catch {}
+        location.reload();
+      }
+    });
     // 기기(브라우저)별 고정 ID — 새로고침해도 중복 집계되지 않음
     let uid = localStorage.getItem("hs_uid");
     if (!uid) {
@@ -132,6 +148,13 @@ const FirebaseSync = {
       name: (data && data.name) || "",
       t: firebase.database.ServerValue.TIMESTAMP,
     });
+  },
+
+  // 마지막 초기화 시각 조회 (재접속 시 초기화 이전 저장 기록 폐기용)
+  fetchResetAt() {
+    const q = this._db.ref("reset/at").once("value").then((s) => s.val() || 0);
+    const timeout = new Promise((r) => setTimeout(() => r(0), 3000));
+    return Promise.race([q, timeout]);
   },
 
   // 게이트가 열리는 순간 콜백 실행 (오버레이 화면 강제 진행용). 해제 함수 반환
