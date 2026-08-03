@@ -563,15 +563,12 @@ function showWaitAll(step) {
     const el = screen("wait-screen", `
       <div class="spinner"></div>
       <div class="wait-title">${esc(step.title)}</div>
-      <div class="wait-count">- / -</div>
       <div class="wait-sub">${nl2br(sub(step.sub))}</div>
       ${Sync.isDemo ? `<div class="demo-tag">데모 모드 — 화면을 탭하면 다음으로 진행됩니다</div>` : ""}
     `);
-    const countEl = el.querySelector(".wait-count");
+    // 대기 인원수는 참가자에게 보여주지 않음 (진행자 콘솔에서만 확인)
     Sync.submit(step.key, { name: player.fullName, flags: player.flags });
-    Sync.waitForAll(step.key, (done, total) => {
-      countEl.textContent = `${done} / ${total}`;
-    }).then(resolve);
+    Sync.waitForAll(step.key, () => {}).then(resolve);
     if (Sync.isDemo) {
       el.onclick = () => Sync._tapToResolve && Sync._tapToResolve();
     }
@@ -582,22 +579,19 @@ function showWaitAll(step) {
 function showSyncPoint(step) {
   vn.el = null;
   return new Promise((resolve) => {
-    const el = screen("wait-screen", `
+    screen("wait-screen", `
       <div class="spinner"></div>
       <div class="wait-title">${esc(step.title || "잠시 대기 중")}</div>
-      <div class="wait-count">- / -</div>
       <div class="wait-sub">${nl2br(sub(step.sub || "모든 인원이 도착하면 자동으로 넘어갑니다."))}</div>
       ${Sync.isDemo ? `<div class="demo-tag">데모 모드 — 잠시 후 자동 진행</div>` : ""}
     `);
-    const countEl = el.querySelector(".wait-count");
+    // 대기 인원수는 참가자에게 보여주지 않음 (진행자 콘솔에서만 확인)
     Sync.submit(step.key, { name: player.fullName });
     // 조건이 이미 충족돼 있어도(마지막 도착자) 대기 화면을 최소 2초 보여줘서
     // 장면·음악 전환이 뚝 끊기지 않고 자연스럽게 이어지도록 함
     const minHold = new Promise((r) => setTimeout(r, 2000));
     Promise.all([
-      Sync.waitForBarrier(step.key, (done, total) => {
-        countEl.textContent = `${done} / ${total}`;
-      }),
+      Sync.waitForBarrier(step.key, () => {}),
       minHold,
     ]).then(resolve);
   });

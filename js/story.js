@@ -30,7 +30,7 @@ const STORY = [
   { type: "bg", value: "bg-retreat" },
   { type: "sprite", value: "" },
   { type: "place", value: "하계수양회 대강당" },
-  { type: "date", value: "하계수양회 마지막 날" },
+  { type: "date", value: "7월 17일 (금) — 하계수양회 마지막 날" },
   { type: "say", text: "뜨거웠던 하계수양회, 그 마지막 날. 대강당을 가득 채운 찬양과 선포되는 말씀이 %NAME%의 마음을 뜨겁게 채우고 있었다." },
   { type: "bg", value: "bg-retreat-out" },
   { type: "place", value: "수양회장 앞" },
@@ -49,11 +49,11 @@ const STORY = [
   { type: "sync", key: "scene_room" },
   { type: "bgm", play: "room" }, /* 🎵 방 프롤로그 시작 */
 
-  /* ───────── 프롤로그: 방 안, 일요일 오전 11시 ───────── */
+  /* ───────── 프롤로그: 방 안, 토요일 오전 11시 ───────── */
   { type: "bg", value: "bg-room" },
   { type: "sprite", value: "basic@g" },
   { type: "place", value: "주인공의 방" },
-  { type: "date", value: "7월 5일 (일) 오전 11시" },
+  { type: "date", value: "7월 25일 (토) 오전 11시" },
 
   /* 🎬 기상 영상 (클립 B — 알람에 깨서 눈 비빔, 파일 없으면 자동 스킵) */
   { type: "video", src: "clip-wake@g" },
@@ -102,7 +102,7 @@ const STORY = [
   { type: "bg", value: "bg-room" },
   { type: "sprite", value: "notice@g" },
   { type: "place", value: "" },
-  { type: "date", value: "7월 5일 (일)" },
+  { type: "date", value: "7월 25일 (토)" },
   { type: "say", speaker: "%NAME%", text: "천국상사…? 주님의 동역자… 채용?" },
   { type: "say", speaker: "%NAME%", text: "(주님의 동역자라… 왠지 마음이 가는데. 한번 들어나 볼까?)" },
   { type: "say", text: "%NAME%의 손가락은 어느새 공고를 누르고 있었다." },
@@ -176,7 +176,7 @@ const STORY = [
   { type: "bg", value: "bg-cafe" },
   { type: "sprite", value: "think@g" },
   { type: "place", value: "동네 카페" },
-  { type: "date", value: "7월 13일 (월) — 서류 접수 마감일" },
+  { type: "date", value: "7월 28일 (화) — 서류 접수 마감일" },
   { type: "say", text: "%NAME_EUN% 노트북을 챙겨 카페로 나왔다. 화면에는 천국상사 지원서 양식이 떠 있다." },
   { type: "say", speaker: "%NAME%", text: "주님을 위해 살아온 경력이라…" },
   { type: "say", speaker: "%NAME%", text: "(나는 지금껏 주님을 위해 무엇을 하며 살았을까…?)" },
@@ -209,7 +209,7 @@ const STORY = [
     messages: [
       "[Web발신]\n천국상사(주) 인재채용팀입니다.",
       "%NAME%님, 축하드립니다! 🎉\n서류전형에 「합격」하셨습니다.",
-      "이어서 면접전형이 진행됩니다.\n\n📅 면접 일시: 8월 8일(토) 오후 2시\n📍 장소: 천국상사(주) 본사 7층 면접장",
+      "이어서 면접전형이 진행됩니다.\n\n📅 면접 일시: 8월 7일(금) 오후 2시\n📍 장소: 천국상사(주) 본사 7층 면접장",
     ],
     button: "확인",
   },
@@ -220,7 +220,7 @@ const STORY = [
   { type: "bg", value: "bg-room" },
   { type: "sprite", value: "shock@g" },
   { type: "place", value: "" },
-  { type: "date", value: "7월 17일 (금) — 서류 합격 발표" },
+  { type: "date", value: "7월 31일 (금) — 서류 합격 발표" },
   { type: "say", speaker: "%NAME%", text: "하… 합격?! 진짜로?!" },
   { type: "sprite", value: "joy@g" },
   { type: "say", text: "%NAME_EUN% 자리에서 벌떡 일어났다. 이렇게 심장이 뛰는 게 얼마 만인지 모르겠다." },
@@ -242,7 +242,7 @@ const STORY = [
   { type: "bg", value: "bg-study" }, /* 실제 교회 스터디룸 사진 (assets/study.png) */
   { type: "sprite", value: "" },
   { type: "place", value: "면접 스터디 모임 장소" },
-  { type: "date", value: "7월 19일 (일)" },
+  { type: "date", value: "8월 3일 (월)" },
   { type: "say", text: "모임 장소에 들어서자, 같은 공고를 보고 지원한 사람들이 둘러앉아 있었다." },
   { type: "say", speaker: "%NAME%", text: "(다들 나랑 같은 공고를 보고 온 사람들이구나… 어? 그런데 왠지 낯익은 얼굴들인데?)" },
   { type: "sprite", value: "img:면접스터디원2@95" },
@@ -274,7 +274,7 @@ const STORY = [
   { type: "bg", value: "bg-interview-wait" },
   { type: "sprite", value: "suit@g" },
   { type: "place", value: "천국상사(주) 면접장 앞" },
-  { type: "date", value: "8월 8일 (토) — 면접 전형" },
+  { type: "date", value: "8월 7일 (금) — 면접 전형" },
   { type: "say", text: "%NAME_EUN% 지원서를 손에 꼭 쥔 채, 면접장 앞 의자에 앉아 순서를 기다리고 있다." },
   { type: "sprite", value: "breath@g" },
   { type: "say", speaker: "%NAME%", text: "(떨린다… 나 같은 사람이 정말 합격할 수 있을까.)" },
@@ -381,7 +381,7 @@ const STORY = [
   { type: "bg", value: "bg-cafe-wait" },
   { type: "sprite", value: "" },
   { type: "place", value: "동네 카페" },
-  { type: "date", value: "8월 16일 (일) — 최종 발표" },
+  { type: "date", value: "8월 17일 (월) — 최종 발표" },
   { type: "say", text: "%NAME_EUN% 카페에 앉아 노트북 앞에서 최종 발표를 기다리고 있었다. 새로고침을 누르는 손끝이 떨린다." },
 
   /* ── 면접에서 「합격」을 준 사람: 최종 합격 화면 ── */
@@ -463,11 +463,11 @@ const STORY = [
   { type: "bg", value: "bg-subway" },
   { type: "sprite", value: "idcard@g" },
   { type: "place", value: "출근 첫날 — 지하철 안" },
-  { type: "date", value: "8월 17일 (월)" },
+  { type: "date", value: "8월 18일 (화)" },
   { type: "say", text: "입사 첫날 아침. %NAME_EUN% 사원증을 목에 걸고, 회사로 향하는 지하철에 올랐다." },
   { type: "say", speaker: "%NAME%", text: "(이런 나를… 뽑아 주셨구나. 부족한 걸 다 아시면서도.)" },
   { type: "sprite", value: "officethink@g" },
-  { type: "say", speaker: "%NAME%", text: "(그 일요일 아침, 이불 속에서 알림 하나를 받았을 땐… 내가 여기까지 오게 될 줄은 몰랐는데.)" },
+  { type: "say", speaker: "%NAME%", text: "(그 토요일 아침, 이불 속에서 알림 하나를 받았을 땐… 내가 여기까지 오게 될 줄은 몰랐는데.)" },
   { type: "sprite", value: "resolve1@g" },
   { type: "say", speaker: "%NAME%", text: "지금부터라도 주님을 위해 열심히 살아야겠어!" },
   { type: "sprite", value: "officethink@g" },
