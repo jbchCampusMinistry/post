@@ -234,7 +234,9 @@ function preloadQueue(urls) {
   const next = () => {
     if (!q.length) return;
     const img = new Image();
-    img.onload = img.onerror = next;
+    // 내려받은 뒤 디코딩까지 미리 해둠 — 배경 전환 시 밑 레이어가 비치는 깜빡임 방지
+    img.onload = () => { (img.decode ? img.decode().catch(() => {}) : Promise.resolve()).then(next, next); };
+    img.onerror = next;
     img.src = q.shift();
   };
   for (let i = 0; i < 3; i++) next(); // 동시에 3개씩
@@ -669,14 +671,16 @@ function showCue(step) {
 }
 
 /* ---------- 사원증 ---------- */
-/* 사원증을 캔버스에 그려 PNG 데이터로 만든다 (photoImg: 증명사진 Image 또는 null) */
-function renderIdcardPng(photoImg, role) {
+/* 사원증을 캔버스에 그려 이미지 데이터로 만든다 (photoImg: 증명사진 Image 또는 null).
+   fmt "jpeg" 는 보관용(용량 절약) — 둥근 모서리 바깥을 배경색으로 채움 */
+function renderIdcardPng(photoImg, role, fmt) {
   const W = 300, H = 460, S = 3; // CSS px 기준 좌표 × 3배 해상도
   const cv = document.createElement("canvas");
   cv.width = W * S; cv.height = H * S;
   const ctx = cv.getContext("2d");
   ctx.scale(S, S);
   const FONT = getComputedStyle(document.body).fontFamily || "sans-serif";
+  if (fmt === "jpeg") { ctx.fillStyle = "#0d0f1a"; ctx.fillRect(0, 0, W, H); } // 모서리 바깥 배경
 
   // 카드 몸통 (흰색, 둥근 모서리) — 이후 모든 그리기는 카드 안쪽으로 클리핑
   const r = 18;
@@ -746,28 +750,7 @@ function renderIdcardPng(photoImg, role) {
   spaced("HEAVEN & CO.", W / 2, 408, 2.7);
 
   ctx.restore();
-  return cv.toDataURL("image/png");
-}
-
-/* 저장 안내 오버레이: 생성된 사원증 이미지 + 다운로드/길게눌러저장 안내 */
-function showIdcardSaveOverlay(dataURL) {
-  const ov = document.createElement("div");
-  ov.className = "save-overlay";
-  ov.innerHTML = `
-    <img src="${dataURL}" alt="사원증">
-    <div class="save-hint">저장이 안 되면 이미지를 <b>길게 눌러</b> ‘사진에 저장’을 선택하세요</div>
-    <div class="save-btns">
-      <button class="btn" id="dlBtn">📥 이미지 저장</button>
-      <button class="btn ghost" id="closeBtn">닫기</button>
-    </div>`;
-  document.body.appendChild(ov);
-  ov.querySelector("#dlBtn").onclick = () => {
-    const a = document.createElement("a");
-    a.href = dataURL;
-    a.download = "천국상사_사원증.png";
-    a.click();
-  };
-  ov.querySelector("#closeBtn").onclick = () => ov.remove();
+  return cv.toDataURL(fmt === "jpeg" ? "image/jpeg" : "image/png", 0.85);
 }
 
 function showIdcard(step) {
@@ -788,7 +771,6 @@ function showIdcard(step) {
       </div>
       <input type="file" id="photoInput" accept="image/*" style="display:none">
       <div class="cap-hint">${nl2br(step.hint)}</div>
-      <button class="btn ghost" id="saveBtn">💾 사원증 이미지 저장</button>
       <button class="btn" id="inBtn">${esc(step.button)}</button>
     `);
     const box = el.querySelector("#photoBox");
@@ -807,11 +789,11 @@ function showIdcard(step) {
       };
       reader.readAsDataURL(f);
     };
-    el.querySelector("#saveBtn").onclick = () => {
-      if (!photoImg) { box.classList.add("shake"); setTimeout(() => box.classList.remove("shake"), 500); }
-      showIdcardSaveOverlay(renderIdcardPng(photoImg, step.role));
+    el.querySelector("#inBtn").onclick = () => {
+      // 만든 사원증을 폰에 보관 → 엔딩 명단 후 진행자가 열면 다시 크게 표시
+      try { localStorage.setItem("hs_idcard", renderIdcardPng(photoImg, step.role, "jpeg")); } catch {}
+      resolve();
     };
-    el.querySelector("#inBtn").onclick = resolve;
   });
 }
 
@@ -881,7 +863,7 @@ function showCredits() {
   return new Promise(() => { // 마지막 화면 — 여기서 게임 종료 (머무름)
     const names = Sync.names();
     const list = names.length ? names : [player.fullName];
-    screen("roster-screen", `
+    const el = screen("roster-screen", `
       <div class="roster-badge">✝️ 천국상사(주)</div>
       <div class="roster-title">최종 합격자 명단</div>
       <div class="roster-grid">
@@ -889,6 +871,21 @@ function showCredits() {
       </div>
       <div class="roster-msg">합격을 진심으로 축하드립니다.</div>
     `);
+    // 진행자가 ⑧(사원증 표시)을 열면 → 각자 자기가 만든 사원증을 크게 표시
+    const showFinalCard = () => {
+      const card = localStorage.getItem("hs_idcard") || renderIdcardPng(null, "주님의 동역자", "jpeg");
+      screen("card-final-screen", `
+        <div class="final-card-title">${esc(player.fullName)} 님의 사원증</div>
+        <img class="final-card-img" src="${card}" alt="사원증">
+        <div class="final-card-sub">천국상사(주) 입사를 진심으로 환영합니다 🎉</div>
+      `);
+    };
+    if (Sync.isDemo) {
+      el.onclick = showFinalCard; // 데모: 명단 화면을 탭하면 사원증 표시
+    } else {
+      Sync.submit("final_card", { name: player.fullName });
+      Sync.onGateOpen("final_card", showFinalCard);
+    }
   });
 }
 

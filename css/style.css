@@ -255,7 +255,7 @@ html, body {
 .bg-cafe           { background: url("../assets/bg-cafe.jpg") center/cover no-repeat, linear-gradient(180deg,#e0cdb0 0%,#b3946f 60%,#77603f 100%); }
 .bg-church         { background: url("../assets/bg-church.jpg") center/cover no-repeat, linear-gradient(180deg,#f3e6cd 0%,#cdb691 55%,#8f7b58 100%); }
 /* 면접 스터디 모임: 실제 교회 스터디룸 사진 (없으면 bg-church → 그라데이션 순으로 대체) */
-.bg-study          { background: url("../assets/study.jpg") center/cover no-repeat, url("../assets/bg-church.jpg") center/cover no-repeat, linear-gradient(180deg,#f3e6cd 0%,#cdb691 55%,#8f7b58 100%); }
+.bg-study          { background: url("../assets/study.jpg") center/cover no-repeat, linear-gradient(180deg,#f3e6cd 0%,#cdb691 55%,#8f7b58 100%); }
 .bg-interview-wait { background: url("../assets/bg-interview-wait.jpg") center/cover no-repeat, linear-gradient(180deg,#e9e5da 0%,#cfc9ba 55%,#8f8977 100%); }
 .bg-interview-room { background: url("../assets/bg-interview-room.jpg") center/cover no-repeat, linear-gradient(180deg,#57607a 0%,#3a4157 60%,#232838 100%); }
 /* 면접관 시점: 지원자(플레이어 자신)가 의자에 앉아 있는 성별별 배경.
@@ -263,10 +263,10 @@ html, body {
 .bg-interview-room-m { background: url("../assets/bg-interview-room-m.jpg") center/cover no-repeat, url("../assets/bg-interview-room.jpg") center/cover no-repeat, linear-gradient(180deg,#57607a 0%,#3a4157 60%,#232838 100%); }
 .bg-interview-room-f { background: url("../assets/bg-interview-room-f.jpg") center/cover no-repeat, url("../assets/bg-interview-room.jpg") center/cover no-repeat, linear-gradient(180deg,#57607a 0%,#3a4157 60%,#232838 100%); }
 /* 최종 발표 대기: 노트북에 평범한 대기 화면이 떠 있는 카페 */
-.bg-cafe-wait      { background: url("../assets/bg-cafe-wait.jpg") center/cover no-repeat, url("../assets/bg-cafe.jpg") center/cover no-repeat, linear-gradient(180deg,#e0cdb0 0%,#b3946f 60%,#77603f 100%); }
+.bg-cafe-wait      { background: url("../assets/bg-cafe-wait.jpg") center/cover no-repeat, linear-gradient(180deg,#e0cdb0 0%,#b3946f 60%,#77603f 100%); }
 /* 최종 합격 확인: 노트북에 합격 화면이 떠 있는 카페 */
-.bg-cafe-pass      { background: url("../assets/bg-cafe-pass.jpg") center/cover no-repeat, url("../assets/bg-cafe.jpg") center/cover no-repeat, linear-gradient(180deg,#e0cdb0 0%,#b3946f 60%,#77603f 100%); }
-.bg-cafe-fail      { background: url("../assets/cafenonpass.jpg") center/cover no-repeat, url("../assets/bg-cafe.jpg") center/cover no-repeat, linear-gradient(180deg,#e0cdb0 0%,#b3946f 60%,#77603f 100%); }
+.bg-cafe-pass      { background: url("../assets/bg-cafe-pass.jpg") center/cover no-repeat, linear-gradient(180deg,#e0cdb0 0%,#b3946f 60%,#77603f 100%); }
+.bg-cafe-fail      { background: url("../assets/cafenonpass.jpg") center/cover no-repeat, linear-gradient(180deg,#e0cdb0 0%,#b3946f 60%,#77603f 100%); }
 .bg-office-in      { background: url("../assets/bg-office-in.jpg") center/cover no-repeat, linear-gradient(180deg,#dfe7f2 0%,#aebcd2 55%,#71809c 100%); }
 .bg-subway         { background: url("../assets/bg-subway.jpg") center/cover no-repeat, linear-gradient(180deg,#d9dee6 0%,#aab3c2 55%,#6d7688 100%); }
 /* 프롤로그 0: 하계수양회 사진 */
@@ -277,7 +277,7 @@ html, body {
 /* 면접 후 귀갓길: 노을 진 골목 */
 .bg-alley          { background: url("../assets/bg-alley.jpg") center/cover no-repeat, linear-gradient(180deg,#f2b28c 0%,#c77e6a 55%,#5d4a63 100%); }
 /* 설교 후 더 어두워진 귀갓길: bg-alley-dusk.png 가 없으면 기존 bg-alley → 그라데이션 순으로 대체 */
-.bg-alley-dusk     { background: url("../assets/bg-alley-dusk.jpg") center/cover no-repeat, url("../assets/bg-alley.jpg") center/cover no-repeat, linear-gradient(180deg,#8a6a7a 0%,#5d4a63 55%,#2a2338 100%); }
+.bg-alley-dusk     { background: url("../assets/bg-alley-dusk.jpg") center/cover no-repeat, linear-gradient(180deg,#8a6a7a 0%,#5d4a63 55%,#2a2338 100%); }
 /* 교회 대강당 내부: bg-hall.png 가 없으면 스터디 모임(bg-church) → 그라데이션 순으로 대체 */
 .bg-hall           { background: url("../assets/bg-hall.png") center/cover no-repeat, url("../assets/bg-church.jpg") center/cover no-repeat, linear-gradient(180deg,#f3e6cd 0%,#cdb691 55%,#8f7b58 100%); }
 /* 발길이 멈춘 교회 외관 (저녁, 불 켜진) */
@@ -770,28 +770,20 @@ html, body {
 .id-logo small { display: block; text-align: center; font-size: 9px; letter-spacing: .3em; color: #9db4cd; margin-top: 3px; }
 .card-screen .cap-hint { margin-top: 22px; font-size: 13px; color: rgba(255,255,255,.5); text-align: center; }
 .card-screen .btn { max-width: 300px; margin-top: 18px; }
-.card-screen #saveBtn { margin-top: 14px; }
-.card-screen #inBtn { margin-top: 10px; }
 
-/* 사진 안 넣고 저장 누르면 사진 칸 흔들어서 알려줌 */
-@keyframes shakeX { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
-.id-photo.shake { animation: shakeX .45s ease; }
-
-/* 사원증 저장 오버레이 */
-.save-overlay {
-  position: fixed; inset: 0; z-index: 999;
-  background: rgba(4,8,18,.92);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 16px; padding: 24px;
+/* 엔딩 명단 후 사원증 표시 (진행자 ⑧ 게이트) */
+.card-final-screen {
+  justify-content: center; align-items: center; gap: 18px; padding: 28px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(232,201,106,.22), transparent 55%), var(--bg-dark);
 }
-.save-overlay img {
-  max-width: min(78vw, 300px); max-height: 58vh;
-  border-radius: 14px;
-  box-shadow: 0 24px 60px rgba(0,0,0,.6);
+.final-card-title { font-size: 18px; font-weight: 700; color: var(--gold); animation: fadeIn .8s ease both; }
+.final-card-img {
+  width: min(76vw, 310px);
+  border-radius: 18px;
+  box-shadow: 0 24px 60px rgba(0,0,0,.55);
+  animation: slideUp .7s ease both;
 }
-.save-overlay .save-hint { font-size: 12px; color: rgba(255,255,255,.55); text-align: center; line-height: 1.6; }
-.save-overlay .save-btns { display: flex; gap: 10px; width: 100%; max-width: 300px; }
-.save-overlay .save-btns .btn { margin-top: 0; }
+.final-card-sub { font-size: 14px; color: rgba(255,255,255,.7); animation: fadeIn 1.2s ease .5s both; }
 
 /* ---------- 나눔 가이드 ---------- */
 .share-screen { padding: 44px 24px 30px; background: linear-gradient(180deg,#141a30 0%,#0d0f1a 100%); }

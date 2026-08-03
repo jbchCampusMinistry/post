@@ -345,7 +345,7 @@ const STORY = [
 
   { type: "bg", value: "bg-church-out" },
   { type: "sprite", value: "wonder@g" },
-  { type: "say", speaker: "%NAME%", text: "(여긴… 스터디로 모였던 그 교회잖아. 오늘 말씀이 있었나?)" },
+  { type: "say", speaker: "%NAME%", text: "(여긴… 저번에 스터디 찾아볼 때 봤던 강릉교회잖아. 오늘 말씀이 있었나?)" },
   { type: "say", text: "그냥 지나치려 했는데… 이상하게 발이 떨어지지 않았다." },
 
   { type: "bgm", stop: true }, /* 🔇 조각말씀 직전 정지 (설교 후 귀갓길에서 이어서 재생) */
@@ -454,7 +454,7 @@ const STORY = [
 
   { type: "idcard",
     role: "주님의 동역자",
-    hint: "📸 사진 칸을 눌러 본인 사진을 넣고,\n「사원증 이미지 저장」을 눌러 간직하세요!",
+    hint: "📸 사진 칸을 눌러 본인 사진을 넣어 주세요.\n만든 사원증은 엔딩에서 다시 크게 보여드립니다!",
     button: "입사하기",
   },
 
