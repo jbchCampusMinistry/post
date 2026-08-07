@@ -435,6 +435,12 @@ const STORY = [
   /* ───────── 최종 합격 확인 (카페) & 사원증 ───────── */
   { type: "transition", text: "며칠 후, 최종 발표 날…" },
   { type: "sync", key: "scene_cafe2" },
+
+  /* 🎬 사장님 결재 영상 (assets/approval.mp4 — 무음, 파일이 없으면 자동 스킵) */
+  { type: "video", src: "approval" },
+  /* 📜 영상이 끝나면: 성명란에 본인 이름이 합성된 합격 증서 표시 */
+  { type: "certificate" },
+
   { type: "bgm", play: "cafe2" }, /* 🎵 최종 합격 — 계획서 작성 전까지 유지 */
 
   { type: "bg", value: "bg-cafe-wait" },

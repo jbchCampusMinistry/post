@@ -817,6 +817,23 @@ html, body {
 .cue-sub { font-size: 14.5px; color: rgba(255,255,255,.55); line-height: 1.7; word-break: keep-all; margin-bottom: 40px; }
 .cue-screen .btn { max-width: 300px; }
 
+/* ---------- 합격 증서 (결재 영상 뒤, 이름 합성) ---------- */
+.certificate-screen {
+  justify-content: center; align-items: center; text-align: center;
+  gap: 14px; padding: 24px 18px; background: #14110a;
+}
+.cert-img {
+  max-width: min(88vw, 440px); max-height: 72dvh; object-fit: contain;
+  border-radius: 3px; box-shadow: 0 10px 44px rgba(0,0,0,.65);
+  animation: certIn 1.1s ease both;
+}
+@keyframes certIn {
+  from { opacity: 0; transform: scale(.93) translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+.cert-hint { font-size: 13px; color: #cbb87e; line-height: 1.6; word-break: keep-all; }
+.certificate-screen .btn { max-width: 300px; }
+
 /* ---------- 엔딩 ---------- */
 .ending-screen {
   justify-content: center;

@@ -360,18 +360,29 @@ function showSay(step) {
     refreshVN();
     const nameEl = el.querySelector(".vn-name");
     const textEl = el.querySelector(".vn-text");
+    const nextEl = el.querySelector(".vn-next");
     const speaker = step.speaker ? sub(step.speaker) : "";
     nameEl.style.display = speaker ? "" : "none";
     nameEl.textContent = speaker;
 
     const full = sub(step.text);
+    // 오탭 방지: 대사가 전부 표시된 뒤 짧은 문장 1초 / 긴 문장 2초가 지나야 넘어갈 수 있음.
+    // "▼ 탭해서 계속" 표시가 나타나면 넘어갈 수 있다는 신호.
+    const hold = full.length >= 30 ? 2000 : 1000;
+    let unlockAt = Infinity;
+    let unlockTimer = null;
+    const startHold = () => {
+      unlockAt = Date.now() + hold;
+      unlockTimer = setTimeout(() => { nextEl.style.visibility = "visible"; }, hold);
+    };
+    nextEl.style.visibility = "hidden";
     let idx = 0;
     let typing = true;
     textEl.textContent = "";
     const timer = setInterval(() => {
       idx++;
       textEl.textContent = full.slice(0, idx);
-      if (idx >= full.length) { clearInterval(timer); typing = false; }
+      if (idx >= full.length) { clearInterval(timer); typing = false; startHold(); }
     }, 28);
 
     el.onclick = () => {
@@ -379,7 +390,9 @@ function showSay(step) {
         clearInterval(timer);
         textEl.textContent = full;
         typing = false;
-      } else {
+        startHold();
+      } else if (Date.now() >= unlockAt) {
+        clearTimeout(unlockTimer);
         el.onclick = null;
         resolve();
       }
@@ -656,6 +669,36 @@ function showStamp(step) {
   });
 }
 
+/* ---------- 합격 증서 (사장님 결재 영상 뒤) ----------
+   assets/certificate.jpg 의 성명란에 참가자 이름을 캔버스로 합성해 보여준다.
+   좌표는 이미지 비율 기준 — 성명란 밑줄: 중심 x 45.4%, 밑줄 y 31.6% (이미지 분석값) */
+function showCertificate() {
+  vn.el = null;
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onerror = () => resolve(); // 증서 이미지가 없으면 조용히 스킵
+    img.onload = () => {
+      const W = img.naturalWidth, H = img.naturalHeight;
+      const cv = document.createElement("canvas");
+      cv.width = W; cv.height = H;
+      const ctx = cv.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      ctx.font = `${Math.round(H * 0.0245)}px "Batang", "바탕", "Noto Serif KR", "Nanum Myeongjo", serif`;
+      ctx.fillStyle = "#232014";
+      ctx.textAlign = "center";
+      ctx.letterSpacing = "0.12em"; // 증서 활자 느낌 (미지원 브라우저는 무시됨)
+      ctx.fillText(player.fullName, W * 0.454, H * 0.311, W * 0.24);
+      const el = screen("certificate-screen", `
+        <img class="cert-img" src="${cv.toDataURL("image/jpeg", 0.92)}" alt="합격 증서">
+        <div class="cert-hint">사장님의 특별 결재로 발급된 합격 증서입니다.<br>이미지를 꾹 누르면 저장할 수 있어요.</div>
+        <button class="btn ghost" id="certBtn">계속</button>
+      `);
+      el.querySelector("#certBtn").onclick = resolve;
+    };
+    img.src = "assets/certificate.jpg";
+  });
+}
+
 /* ---------- 스크린 큐 ---------- */
 function showCue(step) {
   vn.el = null;
@@ -922,6 +965,7 @@ async function runStory(startAt = 0) {
       case "interview": await showInterview(s); break;
       case "stamp": await showStamp(s); break;
       case "cue": await showCue(s); break;
+      case "certificate": await showCertificate(); break;
       case "idcard": await showIdcard(s); break;
       case "share": await showShare(s); break;
       case "ending": await showEnding(s); break;
