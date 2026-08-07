@@ -39,14 +39,35 @@ const STORY = [
   { type: "say", speaker: "%NAME%", text: "이렇게 많은 복음의 역사가 일어나고 있다니… 나도 이제부터 신앙생활 열심히 해야지!" },
   { type: "transition", text: "며칠 후…" },
 
-  /* ───────── 인트로 내레이션: 일상으로 돌아온 도시 전경 ───────── */
+  /* ───────── 인트로: 일상 몽타주 — 다짐이 잊혀져 가는 한 주 ───────── */
   { type: "bg", value: "bg-city" },
   { type: "sprite", value: "" },
   { type: "place", value: "" },
   { type: "date", value: "" },
   { type: "say", text: "일상으로 돌아온 %NAME_EUN% 다시 반복되는 하루하루를 살아가고 있다." },
+
+  { type: "bg", value: "bg-subway" },
+  { type: "sprite", value: "officethink@g" },
+  { type: "place", value: "출근길 지하철" },
+  { type: "date", value: "7월 21일 (화) 오전 7시 30분" },
+  { type: "say", text: "수양회가 끝나고 바로 다음 날 — 콩나물시루 같은 지하철에 몸을 구겨 넣으며 하루가 시작됐다." },
+  { type: "say", speaker: "%NAME%", text: "(수양회 다녀왔더니 일이 산더미네… 오늘까지 처리해야 하는 것만 세 개잖아.)" },
+
+  { type: "bg", value: "bg-office-night" },
+  { type: "sprite", value: "somber@g" },
+  { type: "place", value: "사무실" },
+  { type: "date", value: "7월 23일 (목) 밤 9시" },
+  { type: "say", text: "정신없이 이틀이 지났다. 오늘도 모니터 앞에서 저녁을 넘긴 야근." },
+  { type: "say", speaker: "%NAME%", text: "(아 맞다… 오늘 교회 모임 있는 날이었지. 지금 가긴 글렀고… 다음에 가지 뭐.)" },
+
+  { type: "bg", value: "bg-street-night" },
+  { type: "sprite", value: "breath@g" },
+  { type: "place", value: "집으로 돌아가는 길" },
+  { type: "date", value: "7월 24일 (금) 밤 11시" },
+  { type: "say", text: "금요일 밤은 회식이었다. 시끌벅적 웃고 떠들다 돌아오는 길 — 이상하게 마음 한구석이 허전했다." },
+  { type: "say", speaker: "%NAME%", text: "(수양회 때는 가슴이 그렇게 뜨거웠는데… 아직 일주일도 안 됐는데, 나 왜 이렇게 아무렇지 않지.)" },
   { type: "say", text: "쏟아지는 일과 밀려드는 약속들. 세상에 치여 바쁘게 사는 동안 — 그날의 뜨거웠던 다짐도, 주님의 은혜도 조금씩 잊혀져 갔다." },
-  { type: "transition", text: "그러던 어느 날…" },
+  { type: "transition", text: "그렇게 한 주가 지나갔다…" },
   { type: "sync", key: "scene_room" },
   { type: "bgm", play: "room" }, /* 🎵 방 프롤로그 시작 */
 
@@ -137,6 +158,8 @@ const STORY = [
   /* ───────── 지원 망설임 선택지 ───────── */
   { type: "bg", value: "bg-room" },
   { type: "sprite", value: "roomthink@g" },
+  { type: "say", speaker: "%NAME%", text: "급여가 '땅에서와 천국의 상금'…? 근무지는 '삶의 모든 자리'? 뭐 이런 회사가 다 있어." },
+  { type: "say", speaker: "%NAME%", text: "(장난 같은 공고인데… 이상하다. 왜 자꾸 마음이 가지. 꼭 나한테 하는 말 같잖아.)" },
   { type: "say", text: "「입사지원」 버튼 위에서, %NAME%의 손가락이 멈칫했다." },
   { type: "choice", flag: "apply",
     options: [
@@ -272,6 +295,35 @@ const STORY = [
   { type: "transition", text: "그리고, 면접 당일…" },
   { type: "sync", key: "scene_interview" },
 
+  /* ───────── 회사 로비: 바울·다윗·베드로 이사 만남 (설렘 → 경외 → 자기 비교) ───────── */
+  { type: "bg", value: "bg-lobby" }, /* 엘리베이터 쪽 로비 (assets/bg-lobby.jpg, 없으면 bg-office-in) */
+  { type: "sprite", value: "suit@g" },
+  { type: "place", value: "천국상사(주) 1층 로비" },
+  { type: "date", value: "8월 7일 (금) — 면접 전형" },
+  { type: "say", text: "면접 시간보다 일찍 도착한 %NAME_EUN% 로비를 둘러보았다." },
+  { type: "say", speaker: "%NAME%", text: "(여기가 천국상사… 로비부터 뭔가 다르다.)" },
+  { type: "say", text: "그때, 로비 저편이 웅성거리기 시작했다. 직원들이 일제히 고개 숙여 인사한다." },
+  { type: "say", speaker: "직원A", text: "바울 이사님이다…! 해외 개척 지사만 열세 곳을 세우신 분이야." },
+  { type: "say", speaker: "직원B", text: "본사 공문 절반이 저분 손에서 나왔다던데." },
+  { type: "sprite", value: "img:exec-paul@95" },
+  { type: "say", speaker: "%NAME%", text: "(바, 바울 이사님?! 와… 실물이다. 연수원 교재에서만 보던 분인데…!)" },
+  { type: "sprite", value: "suit@g" },
+  { type: "say", text: "이어서 엘리베이터에서 내린 남자가 지나가며 콧노래를 흥얼거렸다. 그런데 그 콧노래가… 찬양이다." },
+  { type: "say", speaker: "직원A", text: "다윗 이사님이셔. 신입 시절에 그 골리앗 건을 혼자 해결하신 전설." },
+  { type: "say", speaker: "직원B", text: "사장님이 \"내 마음에 합한 사람\"이라고 직접 말씀하신 유일한 분이지." },
+  { type: "sprite", value: "img:exec-david@95" },
+  { type: "say", speaker: "%NAME%", text: "(다윗 이사님까지…! 오늘 무슨 날인가? 사인이라도 받아야 하나?!)" },
+  { type: "sprite", value: "suit@g" },
+  { type: "say", text: "마지막으로, 호탕한 웃음소리와 함께 한 남자가 성큼성큼 로비를 가로질렀다." },
+  { type: "say", speaker: "직원B", text: "베드로 이사님! 채용 설명회 한 번에 삼천 명을 입사시킨 분이잖아." },
+  { type: "sprite", value: "img:exec-peter@95" },
+  { type: "say", speaker: "%NAME%", text: "(베드로 이사님은 진짜 에너지가 다르네… 여기가 정말 천국상사구나…!)" },
+  { type: "sprite", value: "somber@g" },
+  { type: "say", text: "들뜬 마음으로 세 이사의 뒷모습을 눈으로 좇던 %NAME%의 얼굴에서, 문득 웃음기가 걷혔다." },
+  { type: "say", speaker: "%NAME%", text: "(…그런데, 나는.)" },
+  { type: "say", speaker: "%NAME%", text: "(저런 분들이 이사로 있는 회사에… 내가 과연, 저분들과 함께할 수 있을까.)" },
+  { type: "say", text: "방금 전까지 두근거리던 가슴 한켠이, 조용히 서늘해졌다." },
+
   { type: "bg", value: "bg-interview-wait" },
   { type: "sprite", value: "suit@g" },
   { type: "place", value: "천국상사(주) 면접장 앞" },
@@ -279,6 +331,7 @@ const STORY = [
   { type: "say", text: "%NAME_EUN% 지원서를 손에 꼭 쥔 채, 면접장 앞 의자에 앉아 순서를 기다리고 있다." },
   { type: "sprite", value: "breath@g" },
   { type: "say", speaker: "%NAME%", text: "(떨린다… 나 같은 사람이 정말 합격할 수 있을까.)" },
+  { type: "say", speaker: "%NAME%", text: "(면접관은 내 지원서를 보면서 무슨 생각을 할까… 이렇게 빈칸이 많은 서류를 보고도, 나를 뽑고 싶어질까.)" },
   { type: "sprite", value: "suit@g" },
   { type: "say", speaker: "직원", text: "%NAME% 지원자님, 들어오세요." },
   { type: "say", text: "문이 열리고, 면접장 안으로 발을 내딛는 순간—" },
@@ -290,8 +343,12 @@ const STORY = [
   { type: "sprite", value: "" },
   { type: "place", value: "" },
   { type: "whitein" },
-  { type: "say", speaker: "%NAME%", text: "어라… 이게 뭐야..!" },
-  { type: "say", text: "정신을 차려 보니, 당신은 면접관의 자리에 앉아 지원자를 바라보고 있습니다. 그 지원자는… 바로 당신입니다." },
+  { type: "say", speaker: "%NAME%", text: "어라…? 여긴…" },
+  { type: "say", text: "정신을 차려 보니, 당신은 푹신한 의자에 앉아 있다. 눈앞의 책상 위에는 낯선 명패가 놓여 있다 — 「면접관」." },
+  { type: "say", speaker: "%NAME%", text: "(내가… 면접관 자리에 앉아 있다고?)" },
+  { type: "say", text: "고개를 들자, 맞은편에 긴장한 얼굴의 지원자가 앉아 있었다. 그런데… 그 얼굴이 낯익다." },
+  { type: "say", text: "…바로, 당신이다." },
+  { type: "say", text: "오늘만큼은 당신이 면접관입니다. 지원자 %NAME_EUL% 심사하는 것은, 다른 누구도 아닌 당신의 몫입니다." },
   { type: "say", text: "면접관이 된 당신은, 맞은편에 앉은 지원자에게 첫 질문을 던졌다." },
   { type: "say", speaker: "면접관이 된 나", text: "지원자님은… 지금까지 주님을 위해 무엇을 하며 살아오셨습니까?" },
   { type: "say", text: "맞은편의 %NAME_EUN% 쉽게 입을 열지 못했다. 길어지는 그 침묵이 어떤 대답인지 — 당신은 누구보다 잘 알고 있다." },
@@ -354,7 +411,8 @@ const STORY = [
   { type: "bg", value: "bg-hall" },
   { type: "sprite", value: "" },
   { type: "place", value: "교회 대강당" },
-  { type: "say", text: "%NAME_EUN% 홀린 듯 대강당 뒷자리에 조용히 앉았다. 마침 강단에서 말씀이 선포되고 있었다." },
+  { type: "say", text: "%NAME_EUN% 홀린 듯 대강당 뒷자리에 조용히 앉았다." },
+  { type: "say", text: "이윽고, 강단에 선 목사님이 입을 열었다. (이제 앞의 스크린을 봐 주세요)" },
 
   /* ⛔ 진행자 게이트: 전원 도착 시 BGM 자동 정지 → 말씀이 끝나면
      진행자가 ⑤를 열어야 전원 동시 진행 (+ 귀갓길 곡 자동 재개) */

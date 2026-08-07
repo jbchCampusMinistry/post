@@ -268,6 +268,11 @@ html, body {
 .bg-cafe-pass      { background: url("../assets/bg-cafe-pass.jpg") center/cover no-repeat, linear-gradient(180deg,#e0cdb0 0%,#b3946f 60%,#77603f 100%); }
 .bg-cafe-fail      { background: url("../assets/cafenonpass.jpg") center/cover no-repeat, linear-gradient(180deg,#e0cdb0 0%,#b3946f 60%,#77603f 100%); }
 .bg-office-in      { background: url("../assets/bg-office-in.jpg") center/cover no-repeat, linear-gradient(180deg,#dfe7f2 0%,#aebcd2 55%,#71809c 100%); }
+/* 면접 당일 1층 로비(엘리베이터 쪽 구도): bg-lobby.jpg 가 없으면 bg-office-in → 그라데이션 순으로 대체 */
+.bg-lobby          { background: url("../assets/bg-lobby.jpg") center/cover no-repeat, url("../assets/bg-office-in.jpg") center/cover no-repeat, linear-gradient(180deg,#dfe7f2 0%,#aebcd2 55%,#71809c 100%); }
+/* 일상 몽타주용 — 파일이 없으면 두 번째 url(기존 배경)로 자동 대체 */
+.bg-office-night   { background: url("../assets/bg-office-night.jpg") center/cover no-repeat, url("../assets/bg-office-in.jpg") center/cover no-repeat, linear-gradient(180deg,#2a3348 0%,#1c2334 55%,#10141f 100%); }
+.bg-street-night   { background: url("../assets/bg-street-night.jpg") center/cover no-repeat, url("../assets/bg-alley-dusk.jpg") center/cover no-repeat, linear-gradient(180deg,#3a3350 0%,#272138 55%,#141021 100%); }
 .bg-subway         { background: url("../assets/bg-subway.jpg") center/cover no-repeat, linear-gradient(180deg,#d9dee6 0%,#aab3c2 55%,#6d7688 100%); }
 /* 프롤로그 0: 하계수양회 사진 */
 .bg-retreat-out    { background: url("../assets/bg-retreat-out.jpg") center/cover no-repeat, linear-gradient(180deg,#7fa8d9 0%,#a8c4e2 55%,#8b97ad 100%); }
