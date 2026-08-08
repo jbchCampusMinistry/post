@@ -160,6 +160,20 @@ document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") keepAwake();
 });
 
+/* ---------- 전체화면 유지 ----------
+   ESC·뒤로가기·알림 등으로 전체화면이 풀리면 다음 탭에서 다시 들어간다.
+   전체화면 요청은 사용자 제스처 안에서만 허용되므로 탭 시점에 처리.
+   iOS Safari(아이폰)는 Fullscreen API 자체가 없어 조용히 넘어감 */
+function keepFullscreen() {
+  const rt = document.documentElement;
+  if (!rt.requestFullscreen) return;
+  document.addEventListener("pointerdown", () => {
+    if (!document.fullscreenElement) {
+      rt.requestFullscreen({ navigationUI: "hide" }).catch(() => {});
+    }
+  }, { capture: true, passive: true });
+}
+
 /* ---------- 진행 저장 / 이어하기 ----------
    매 스텝 위치와 선택(flags)을 폰에 저장 → 새로고침·리로드 시
    "이어하기"로 그 장면부터 복구 (12시간 지난 기록은 무시) */
@@ -191,7 +205,6 @@ function fastForward(end) {
     if (s.type === "bg") vn.bg = s.value;
     else if (s.type === "sprite") vn.sprite = s.value;
     else if (s.type === "place") vn.place = s.value;
-    else if (s.type === "date") vn.date = s.value;
     else if (s.type === "bgm") lastBgm = s.stop ? null : s.play;
   }
   if (lastBgm) demoBgm(lastBgm); // 데모 모드일 때만 재생됨
@@ -294,14 +307,13 @@ function showStartVideo() {
 }
 
 /* ---------- 비주얼노벨 대사 ---------- */
-const vn = { bg: "bg-room", sprite: "", place: "", date: "", el: null };
+const vn = { bg: "bg-room", sprite: "", place: "", el: null };
 
 function ensureVN() {
   if (vn.el && document.body.contains(vn.el)) return vn.el;
   const el = screen("vn-screen", `
     <div class="vn-bg ${vn.bg}"></div>
     <div class="vn-place" style="display:none"></div>
-    <div class="vn-date" style="display:none"></div>
     <div class="vn-sprite" style="display:none"></div>
     <div class="vn-box">
       <span class="vn-name" style="display:none"></span>
@@ -324,9 +336,6 @@ function refreshVN() {
   const pl = el.querySelector(".vn-place");
   pl.style.display = vn.place ? "" : "none";
   pl.textContent = vn.place;
-  const dt = el.querySelector(".vn-date");
-  dt.style.display = vn.date ? "" : "none";
-  dt.textContent = vn.date;
   const sp = el.querySelector(".vn-sprite");
   // img: 스프라이트(성별 무관 실사 인물)는 잘라내지 않고 대사창 위에 전체를 보여줌
   sp.classList.toggle("fit", vn.sprite.startsWith("img:"));
@@ -944,7 +953,7 @@ async function runStory(startAt = 0) {
       case "bg": vn.bg = s.value; break;
       case "sprite": vn.sprite = s.value; break;
       case "place": vn.place = s.value; break;
-      case "date": vn.date = s.value; break; // 씬 우상단 날짜 표기
+      case "date": break; // 씬 우상단 날짜 표기 — 사용하지 않음(스텝만 통과)
       case "say": await showSay(s); break;
       case "choice": await showChoice(s); break;
       case "say-if":
@@ -981,6 +990,7 @@ async function runStory(startAt = 0) {
 (async function main() {
   await showTapStart();   // 첫 터치 → 이후 BGM 자동재생 허용 + 전체화면
   keepAwake();            // 화면 꺼짐 방지
+  keepFullscreen();       // 전체화면이 풀리면 다음 탭에 자동 재진입
 
   // 진행하던 기록이 있으면 이어하기 제안
   // (단, 진행자가 그 이후에 전체 초기화를 했다면 기록을 폐기하고 처음부터)

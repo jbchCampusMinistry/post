@@ -358,16 +358,6 @@ html, body {
   backdrop-filter: blur(4px);
 }
 /* 씬 우상단 날짜 — 작은 흰 글씨 */
-.vn-date {
-  position: absolute;
-  top: 22px;
-  right: 18px;
-  font-size: 12px;
-  letter-spacing: .06em;
-  color: rgba(255,255,255,.92);
-  text-shadow: 0 1px 5px rgba(0,0,0,.65);
-  animation: fadeIn .8s ease both;
-}
 /* 선택지 버튼 (대사창 위에 표시) */
 .vn-choices {
   position: absolute;
