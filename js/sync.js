@@ -49,6 +49,9 @@ const DemoSync = {
   // 데모: 게이트 감시 없음 (해제 함수만 반환)
   onGateOpen() { return () => {}; },
 
+  // 데모: 진행자 강제 이동 없음
+  onJump() {},
+
   // 데모: 가짜 카운트를 보여주고, 사용자가 화면을 탭하면 통과
   waitForAll(key, onCount) {
     return new Promise((resolve) => {
@@ -155,6 +158,21 @@ const FirebaseSync = {
     const q = this._db.ref("reset/at").once("value").then((s) => s.val() || 0);
     const timeout = new Promise((r) => setTimeout(() => r(0), 3000));
     return Promise.race([q, timeout]);
+  },
+
+  /* 진행자 [전원 이동] 방송 감지 — admin.html 에서 챕터를 지정해 보내면
+     접속 중인 모든 폰이 그 챕터로 즉시 이동한다.
+     첫 스냅샷은 기준값으로만 쓰고(이미 있던 기록으로 재이동 방지),
+     이후 새 명령이 올 때만 콜백 실행 */
+  _jumpAt: null,
+  onJump(cb) {
+    this._db.ref("jump").on("value", (s) => {
+      const v = s.val();
+      if (!v || !v.key) return;
+      const at = v.at || 0;
+      if (this._jumpAt === null) { this._jumpAt = at; return; }
+      if (at !== this._jumpAt) { this._jumpAt = at; cb(v.key); }
+    });
   },
 
   // 게이트가 열리는 순간 콜백 실행 (오버레이 화면 강제 진행용). 해제 함수 반환

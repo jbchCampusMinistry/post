@@ -145,6 +145,22 @@
 
   <div id="gates"></div>
 
+  <div class="panel" id="jumpPanel">
+    <h3>⏩ 전원 강제 이동</h3>
+    <div class="desc" style="font-size:12px;color:rgba(255,255,255,.45);margin-bottom:10px;line-height:1.7">
+      접속 중인 <b>모든 폰</b>을 선택한 장면으로 즉시 이동시킵니다 (각 폰 화면이 새로고침됨).<br>
+      게이트를 여는 것과 달리 <b>중간 장면을 건너뜁니다</b> — 리허설·사고 복구용.<br>
+      ※ 이름을 아직 입력하지 않은 폰은 이동하지 않습니다.
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <select id="jumpSel" style="flex:1;min-width:200px;background:rgba(0,0,0,.3);color:#fff;
+        border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:10px;font-family:inherit;font-size:13px"></select>
+      <button id="jumpBtn" style="background:none;border:1px solid rgba(232,201,106,.6);color:var(--gold);
+        border-radius:10px;padding:10px 18px;font-size:13px;font-family:inherit;cursor:pointer;white-space:nowrap">전원 이동</button>
+    </div>
+    <div id="jumpMsg" style="margin-top:8px;font-size:12px;color:var(--gold);min-height:16px"></div>
+  </div>
+
   <div class="danger-zone">
     <button id="resetBtn">⚠️ 전체 초기화 (참가자·게이트 기록 삭제)</button>
     <div class="note">
@@ -449,6 +465,29 @@ function start() {
         : `<span class="empty">현재 이 지점에 있는 인원 없음</span>`;
     });
   });
+
+  /* 전원 강제 이동 — 선택한 장면으로 모든 폰을 즉시 이동
+     (게임에 실제로 존재하는 동기화 지점만 목록에 넣는다.
+      game_start·final_card 는 스토리 스텝이 아니라 별도 처리라 제외) */
+  const JUMPABLE = POINTS.filter((p) => p.key !== "game_start" && p.key !== "final_card");
+  const jumpSel = document.getElementById("jumpSel");
+  JUMPABLE.forEach((p) => {
+    const o = document.createElement("option");
+    o.value = p.key;
+    o.textContent = p.label;
+    jumpSel.appendChild(o);
+  });
+  document.getElementById("jumpBtn").onclick = () => {
+    const key = jumpSel.value;
+    const p = JUMPABLE.find((x) => x.key === key);
+    const label = p ? p.label : key;
+    if (!confirm(`접속 중인 모든 폰을 다음 장면으로 이동시킵니다.\n\n  → ${label}\n\n각 폰은 화면이 새로고침되며, 중간 장면은 건너뜁니다.\n진행할까요?`)) return;
+    db.ref("jump").set({ key, at: firebase.database.ServerValue.TIMESTAMP }).then(() => {
+      const msg = document.getElementById("jumpMsg");
+      msg.textContent = `✓ "${label}" 로 이동 지시를 보냈습니다.`;
+      setTimeout(() => { msg.textContent = ""; }, 6000);
+    });
+  };
 
   /* 전체 초기화 */
   document.getElementById("resetBtn").onclick = () => {

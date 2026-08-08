@@ -174,6 +174,54 @@ function keepFullscreen() {
   }, { capture: true, passive: true });
 }
 
+/* ---------- 진행자 [전원 이동] ----------
+   admin.html 에서 챕터를 지정해 보내면 접속 중인 모든 폰이 그 챕터로 즉시 이동.
+   진행 중인 대사·영상을 안전하게 끊기 위해 목표를 저장하고 리로드한다
+   (전체 초기화와 같은 방식) */
+const JUMP_KEY = "hs_jump";
+function watchJump() {
+  Sync.onJump((key) => {
+    try { localStorage.setItem(JUMP_KEY, key); } catch {}
+    location.reload();
+  });
+}
+/* 저장된 이동 목표를 꺼내고 지운다 (1회성) */
+function takeJumpTarget() {
+  try {
+    const k = localStorage.getItem(JUMP_KEY);
+    localStorage.removeItem(JUMP_KEY);
+    return k;
+  } catch { return null; }
+}
+/* 동기화 지점 key → STORY 인덱스 */
+function stepIndexOfKey(key) {
+  return STORY.findIndex(
+    (s) => (s.type === "sync" || s.type === "waitAll") && s.key === key
+  );
+}
+/* 이름·성별 복원 (저장 기록 → 프로필 순). 이동하려면 이름이 있어야 함 */
+function restorePlayer() {
+  if (player.fullName) return true;
+  const save = loadSave();
+  if (save && save.fullName) {
+    player.fullName = save.fullName;
+    player.name = givenNameOf(save.fullName);
+    player.gender = save.gender;
+    player.flags = save.flags || {};
+    return true;
+  }
+  try {
+    const p = JSON.parse(localStorage.getItem("hs_profile"));
+    if (p && p.name) {
+      player.fullName = p.name;
+      player.name = givenNameOf(p.name);
+      player.gender = p.gender || "male";
+      return true;
+    }
+  } catch {}
+  return false;
+}
+
 /* ---------- 진행 저장 / 이어하기 ----------
    매 스텝 위치와 선택(flags)을 폰에 저장 → 새로고침·리로드 시
    "이어하기"로 그 장면부터 복구 (12시간 지난 기록은 무시) */
@@ -991,6 +1039,15 @@ async function runStory(startAt = 0) {
   await showTapStart();   // 첫 터치 → 이후 BGM 자동재생 허용 + 전체화면
   keepAwake();            // 화면 꺼짐 방지
   keepFullscreen();       // 전체화면이 풀리면 다음 탭에 자동 재진입
+  watchJump();            // 진행자 [전원 이동] 방송 감시
+
+  /* 진행자가 보낸 이동 목표가 있으면 이어하기보다 우선 (리로드 직후 1회) */
+  let jumpAt = -1;
+  const jumpKey = takeJumpTarget();
+  if (jumpKey) {
+    const idx = stepIndexOfKey(jumpKey);
+    if (idx >= 0 && restorePlayer()) jumpAt = idx;
+  }
 
   // 진행하던 기록이 있으면 이어하기 제안
   // (단, 진행자가 그 이후에 전체 초기화를 했다면 기록을 폐기하고 처음부터)
@@ -1004,7 +1061,9 @@ async function runStory(startAt = 0) {
     }
   }
   let resumeAt = -1;
-  if (save) {
+  if (jumpAt >= 0) {
+    resumeAt = jumpAt;      // 진행자 지시 — 이어하기 물음 없이 그 챕터로
+  } else if (save) {
     if (await showResumePrompt(save)) {
       player.fullName = save.fullName;
       player.name = givenNameOf(save.fullName);
